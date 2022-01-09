@@ -96,7 +96,7 @@ class BookingControllerTest extends WebTestCase
     {
         $requestData = [
             'testCenterId' => $this->testCenter->getUuid()->toRfc4122(),
-            'selectedOpeningDayDate' => '07.12.2020',
+            'selectedOpeningDayDate' => '10.01.2022',
         ];
 
         $this->client->request(
@@ -146,7 +146,7 @@ class BookingControllerTest extends WebTestCase
     {
         $requestData = [
             'selectedTestCenterId' => $this->testCenter->getUuid()->toRfc4122(),
-            'selectedOpeningDayDate' => '07.12.2020',
+            'selectedOpeningDayDate' => '10.01.2022',
             'selectedOpeningTime' => '12:00',
             'participants' => [
                 [
@@ -184,7 +184,7 @@ class BookingControllerTest extends WebTestCase
     {
         $requestData = [
             'selectedTestCenterId' => $this->testCenter->getUuid()->toRfc4122(),
-            'selectedOpeningDayDate' => '07.12.2020',
+            'selectedOpeningDayDate' => '10.01.2022',
             'selectedOpeningTime' => '09:00',
             'participants' => [
                 [
@@ -279,7 +279,7 @@ class BookingControllerTest extends WebTestCase
     {
         $requestData = [
             'selectedTestCenterId' => $this->testCenter->getUuid()->toRfc4122(),
-            'selectedOpeningDayDate' => '07.12.2020',
+            'selectedOpeningDayDate' => '10.01.2022',
             'selectedOpeningTime' => '09:00',
             'participants' => [
                 [
@@ -319,8 +319,48 @@ class BookingControllerTest extends WebTestCase
     {
         $requestData = [
             'selectedTestCenterId' => $this->testCenter->getUuid()->toRfc4122(),
-            'selectedOpeningDayDate' => '07.12.2020',
+            'selectedOpeningDayDate' => '10.01.2022',
             'selectedOpeningTime' => '12:01',
+            'participants' => [
+                [
+                    'firstName' => 'test',
+                    'lastName' => 'developer',
+                    'street' => 'testStreet',
+                    'houseNumber' => '50',
+                    'zipCode' => '012345',
+                    'city' => 'testCity',
+                    'phoneNumber' => '0123456789',
+                    'email' => 'test@email.com',
+                    'birthDate' => '01.01.1980'
+                ]
+            ],
+        ];
+        $requestData['token'] = $this->getTokenFromRequestData($requestData);
+
+        $this->client->request(
+            'POST',
+            '/api/booking/checkout/finalize',
+            [],
+            [],
+            [],
+            json_encode($requestData)
+        );
+
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        static::assertResponseStatusCodeSame(400);
+        static::assertArrayHasKey('error', $response);
+        static::assertArrayHasKey('success', $response);
+
+        static::assertSame('ERROR_BOOKING_NOT_ALLOWED', $response['error']);
+        static::assertFalse($response['success']);
+    }
+
+    public function testBookingFinalizeWithYearNotEqualsFromYearInAppContext(): void
+    {
+        $requestData = [
+            'selectedTestCenterId' => $this->testCenter->getUuid()->toRfc4122(),
+            'selectedOpeningDayDate' => '07.12.2020',
+            'selectedOpeningTime' => '12:00',
             'participants' => [
                 [
                     'firstName' => 'test',
@@ -359,7 +399,7 @@ class BookingControllerTest extends WebTestCase
     {
         $requestData = [
             'selectedTestCenterId' => $this->testCenter->getUuid()->toRfc4122(),
-            'selectedOpeningDayDate' => '07.12.2020',
+            'selectedOpeningDayDate' => '10.01.2022',
             'selectedOpeningTime' => '12:00',
             'participants' => [
                 [
@@ -399,7 +439,7 @@ class BookingControllerTest extends WebTestCase
     {
         $requestData = [
             'selectedTestCenterId' => $this->testCenter->getUuid()->toRfc4122(),
-            'selectedOpeningDayDate' => '08.12.2020',
+            'selectedOpeningDayDate' => '11.01.2022',
             'selectedOpeningTime' => '12:00',
             'participants' => [
                 [
@@ -439,7 +479,7 @@ class BookingControllerTest extends WebTestCase
     {
         $requestData = [
             'selectedTestCenterId' => $this->testCenter->getUuid()->toRfc4122(),
-            'selectedOpeningDayDate' => '07.12.2020',
+            'selectedOpeningDayDate' => '10.01.2022',
             'selectedOpeningTime' => '11:05',
             'participants' => [
                 [
