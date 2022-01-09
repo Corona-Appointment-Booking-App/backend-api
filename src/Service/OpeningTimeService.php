@@ -5,24 +5,24 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\AppConstants;
+use App\AppContext;
 use App\Entity\OpeningTime;
 use App\Exception\OpeningTimeNotFoundException;
 use App\Repository\OpeningTimeRepository;
-use App\Service\Validator\OpeningTimeValidatorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class OpeningTimeService implements OpeningTimeServiceInterface
 {
     private EntityManagerInterface $entityManager;
 
-    private OpeningTimeValidatorInterface $openingTimeValidator;
+    private AppContext $appContext;
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        OpeningTimeValidatorInterface $openingTimeValidator
+        AppContext $appContext
     ) {
         $this->entityManager = $entityManager;
-        $this->openingTimeValidator = $openingTimeValidator;
+        $this->appContext = $appContext;
     }
 
     public function getOpeningTimeByUuid(string $uuid): OpeningTime
@@ -80,7 +80,12 @@ class OpeningTimeService implements OpeningTimeServiceInterface
 
     public function createDateTimeFromTime(string $time): \DateTimeImmutable
     {
-        return new \DateTimeImmutable(sprintf('%s %s', AppConstants::FORMAT_PREFIX_TIME, $time));
+        $formatPrefixTime = sprintf(
+            AppConstants::FORMAT_PREFIX_TIME,
+            $this->appContext->getContextYear()
+        );
+
+        return new \DateTimeImmutable(sprintf('%s %s', $formatPrefixTime, $time));
     }
 
     public function createOpeningTime(\DateTimeImmutable $time): OpeningTime
