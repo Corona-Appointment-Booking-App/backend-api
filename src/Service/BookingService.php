@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\AppConstants;
+use App\AppContext;
 use App\DataTransferObject\BookingDto;
 use App\Entity\Booking;
 use App\Entity\BookingParticipant;
@@ -30,18 +31,22 @@ class BookingService implements BookingServiceInterface
 
     private SanitizerInterface $htmlSanitizer;
 
+    private AppContext $appContext;
+
     public function __construct(
         EntityManagerInterface $entityManager,
         TestCenterServiceInterface $testCenterService,
         OpeningTimeServiceInterface $openingTimeService,
         BookingValidatorInterface $bookingValidator,
-        SanitizerInterface $htmlSanitizer
+        SanitizerInterface $htmlSanitizer,
+        AppContext $appContext
     ) {
         $this->entityManager = $entityManager;
         $this->testCenterService = $testCenterService;
         $this->openingTimeService = $openingTimeService;
         $this->bookingValidator = $bookingValidator;
         $this->htmlSanitizer = $htmlSanitizer;
+        $this->appContext = $appContext;
     }
 
     public function getBookingByUuid(string $uuid): Booking
@@ -125,24 +130,20 @@ class BookingService implements BookingServiceInterface
         $bookingDay = mb_strtolower($booking->getTime()->format(AppConstants::FORMAT_DAY));
         $bookingTime = $booking->getTime()->format(AppConstants::FORMAT_TIME);
         $openingTimesForDay = $this->openingTimeService->getOpeningTimesForDay($bookingDay, $booking->getTestCenter()->getOpeningDays());
+        $testCenterId = $booking->getTestCenter()->getUuid()->toRfc4122();
+
+        if ($booking->getTime()->format(AppConstants::FORMAT_YEAR) !== $this->appContext->getContextYear()) {
+            throw new BookingNotAllowedException($testCenterId, $booking->getTime());
+        }
 
         if (empty($openingTimesForDay)) {
-            throw new BookingNotAllowedException($booking->getTestCenter()->getUuid()->toRfc4122(), $booking->getTime());
+            throw new BookingNotAllowedException($testCenterId, $booking->getTime());
         }
 
-        $allowedOpeningTimes = [];
-
-        foreach ($openingTimesForDay as $openingTimeForDay) {
-            try {
-                $openingTime = $this->openingTimeService->getOpeningTimeByTime($openingTimeForDay->getTime());
-                $allowedOpeningTimes[] = $openingTime->getTime()->format(AppConstants::FORMAT_TIME);
-            } catch (\Throwable $e) {
-                continue;
-            }
-        }
+        $allowedOpeningTimes = $this->getAllowedOpeningTimes($openingTimesForDay);
 
         if (!\in_array($bookingTime, $allowedOpeningTimes, true)) {
-            throw new BookingNotAllowedException($booking->getTestCenter()->getUuid()->toRfc4122(), $booking->getTime());
+            throw new BookingNotAllowedException($testCenterId, $booking->getTime());
         }
     }
 
@@ -155,6 +156,22 @@ class BookingService implements BookingServiceInterface
         if ($isBooked) {
             throw new BookingAlreadyExistsException($testCenter->getUuid()->toRfc4122(), $time);
         }
+    }
+
+    private function getAllowedOpeningTimes(array $openingTimesForDay): array
+    {
+        $allowedOpeningTimes = [];
+
+        foreach ($openingTimesForDay as $openingTimeForDay) {
+            try {
+                $openingTime = $this->openingTimeService->getOpeningTimeByTime($openingTimeForDay->getTime());
+                $allowedOpeningTimes[] = $openingTime->getTime()->format(AppConstants::FORMAT_TIME);
+            } catch (\Throwable $e) {
+                continue;
+            }
+        }
+
+        return $allowedOpeningTimes;
     }
 
     private function getBookingRepository(): BookingRepository

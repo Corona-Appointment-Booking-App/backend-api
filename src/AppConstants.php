@@ -7,6 +7,7 @@ namespace App;
 class AppConstants
 {
     public const FORMAT_DAY = 'l';
+    public const FORMAT_YEAR = 'Y';
     public const FORMAT_DATE = 'd.m.Y';
     public const FORMAT_DATE_TODAY = 'today';
     public const FORMAT_BIRTHDATE = 'd.m.Y';
