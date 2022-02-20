@@ -10,6 +10,7 @@ use App\DataTransferObject\BookingDto;
 use App\Entity\Booking;
 use App\Entity\BookingParticipant;
 use App\Entity\TestCenter;
+use App\Event\BookingCreatedEvent;
 use App\Exception\BookingAlreadyExistsException;
 use App\Exception\BookingNotAllowedException;
 use App\Exception\BookingNotFoundException;
@@ -18,10 +19,13 @@ use App\Repository\Result\PaginatedItemsResult;
 use App\Service\Util\SanitizerInterface;
 use App\Service\Validator\BookingValidatorInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class BookingService implements BookingServiceInterface
 {
     private EntityManagerInterface $entityManager;
+
+    private EventDispatcherInterface $eventDispatcher;
 
     private TestCenterServiceInterface $testCenterService;
 
@@ -35,6 +39,7 @@ class BookingService implements BookingServiceInterface
 
     public function __construct(
         EntityManagerInterface $entityManager,
+        EventDispatcherInterface $eventDispatcher,
         TestCenterServiceInterface $testCenterService,
         OpeningTimeServiceInterface $openingTimeService,
         BookingValidatorInterface $bookingValidator,
@@ -42,6 +47,7 @@ class BookingService implements BookingServiceInterface
         AppContext $appContext
     ) {
         $this->entityManager = $entityManager;
+        $this->eventDispatcher = $eventDispatcher;
         $this->testCenterService = $testCenterService;
         $this->openingTimeService = $openingTimeService;
         $this->bookingValidator = $bookingValidator;
@@ -121,6 +127,8 @@ class BookingService implements BookingServiceInterface
 
         $this->entityManager->persist($booking);
         $this->entityManager->flush();
+
+        $this->eventDispatcher->dispatch(new BookingCreatedEvent($booking), BookingCreatedEvent::NAME);
 
         return $booking;
     }
