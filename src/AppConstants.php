@@ -14,4 +14,5 @@ class AppConstants
     public const FORMAT_CREATED_AT = 'd.m.Y H:i';
     public const FORMAT_TIME = 'H:i';
     public const FORMAT_PREFIX_TIME = '01-01-%s';
+    public const FORMAT_EMAIL_CONFIRMATION = 'd.m.Y H:i';
 }

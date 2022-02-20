@@ -14,12 +14,16 @@ class AppContext
 
     private string $contextReleaseVersion;
 
+    private string $contextMailSender;
+
     public function __construct(
         string $contextYear,
-        string $contextReleaseVersion
+        string $contextReleaseVersion,
+        string $contextMailSender
     ) {
         $this->contextYear = $contextYear;
         $this->contextReleaseVersion = $contextReleaseVersion;
+        $this->contextMailSender = $contextMailSender;
     }
 
     public function getContextYear(): string
@@ -40,5 +44,15 @@ class AppContext
     public function setContextReleaseVersion(string $contextReleaseVersion): void
     {
         $this->contextReleaseVersion = $contextReleaseVersion;
+    }
+
+    public function getContextMailSender(): string
+    {
+        return $this->contextMailSender;
+    }
+
+    public function setContextMailSender(string $contextMailSender): void
+    {
+        $this->contextMailSender = $contextMailSender;
     }
 }

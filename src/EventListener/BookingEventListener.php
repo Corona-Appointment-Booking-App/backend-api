@@ -5,10 +5,18 @@ declare(strict_types=1);
 namespace App\EventListener;
 
 use App\Event\BookingCreatedEvent;
+use App\Service\BookingServiceInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class BookingEventListener implements EventSubscriberInterface
 {
+    private BookingServiceInterface $bookingService;
+
+    public function __construct(BookingServiceInterface $bookingService)
+    {
+        $this->bookingService = $bookingService;
+    }
+
     public static function getSubscribedEvents(): array
     {
         return [
@@ -18,6 +26,6 @@ class BookingEventListener implements EventSubscriberInterface
 
     public function onBookingCreated(BookingCreatedEvent $event): void
     {
-        // todo add action
+        $this->bookingService->sendEmailConfirmation($event->getBooking());
     }
 }

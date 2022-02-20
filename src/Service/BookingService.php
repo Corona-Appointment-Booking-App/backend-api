@@ -19,6 +19,9 @@ use App\Repository\Result\PaginatedItemsResult;
 use App\Service\Util\SanitizerInterface;
 use App\Service\Validator\BookingValidatorInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class BookingService implements BookingServiceInterface
@@ -26,6 +29,8 @@ class BookingService implements BookingServiceInterface
     private EntityManagerInterface $entityManager;
 
     private EventDispatcherInterface $eventDispatcher;
+
+    private MailerInterface $mailer;
 
     private TestCenterServiceInterface $testCenterService;
 
@@ -40,6 +45,7 @@ class BookingService implements BookingServiceInterface
     public function __construct(
         EntityManagerInterface $entityManager,
         EventDispatcherInterface $eventDispatcher,
+        MailerInterface $mailer,
         TestCenterServiceInterface $testCenterService,
         OpeningTimeServiceInterface $openingTimeService,
         BookingValidatorInterface $bookingValidator,
@@ -48,6 +54,7 @@ class BookingService implements BookingServiceInterface
     ) {
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
+        $this->mailer = $mailer;
         $this->testCenterService = $testCenterService;
         $this->openingTimeService = $openingTimeService;
         $this->bookingValidator = $bookingValidator;
@@ -131,6 +138,32 @@ class BookingService implements BookingServiceInterface
         $this->eventDispatcher->dispatch(new BookingCreatedEvent($booking), BookingCreatedEvent::NAME);
 
         return $booking;
+    }
+
+    public function sendEmailConfirmation(Booking $booking): void
+    {
+        $toAddresses = [];
+        foreach ($booking->getParticipants() as $participant) {
+            /** @var BookingParticipant $participant */
+            $toAddresses[] = new Address($participant->getEmail());
+        }
+
+        $email = (new TemplatedEmail())
+            ->from($this->appContext->getContextMailSender())
+            ->to(...$toAddresses)
+            ->subject('Buchungsbestätigung')
+            ->htmlTemplate('emails/booking-confirmation.html.twig')
+            ->context([
+                'testCenter' => [
+                    'name' => $booking->getTestCenter()->getName(),
+                    'address' => $booking->getTestCenter()->getAddress()
+                ],
+                'bookingCode' => mb_substr($booking->getUuid()->toBase32(), 0, 10),
+                'bookingDate' => $booking->getTime()->format(AppConstants::FORMAT_EMAIL_CONFIRMATION),
+                'cancelUrl' => 'todo'
+            ]);
+
+        $this->mailer->send($email);
     }
 
     private function validateBookingTimeIsValid(Booking $booking): void
