@@ -49,6 +49,12 @@ class Booking implements EntityInterface
     private \DateTimeImmutable $time;
 
     /**
+     * @ORM\Column(type="string", length=10, unique=true)
+     * @Groups({"booking.read", "booking.write"})
+     */
+    private string $code;
+
+    /**
      * @ORM\OneToMany(targetEntity="App\Entity\BookingParticipant", mappedBy="booking", cascade={"persist"})
      * @Groups({"booking.read", "booking.write"})
      */
@@ -110,6 +116,16 @@ class Booking implements EntityInterface
     public function setTime(\DateTimeImmutable $time): void
     {
         $this->time = $time;
+    }
+
+    public function getCode(): string
+    {
+        return $this->code;
+    }
+
+    public function setCode(string $code): void
+    {
+        $this->code = $code;
     }
 
     public function getParticipants()

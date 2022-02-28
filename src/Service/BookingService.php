@@ -19,6 +19,7 @@ use App\Repository\Result\PaginatedItemsResult;
 use App\Service\Util\SanitizerInterface;
 use App\Service\Validator\BookingValidatorInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
@@ -31,6 +32,8 @@ class BookingService implements BookingServiceInterface
     private EventDispatcherInterface $eventDispatcher;
 
     private MailerInterface $mailer;
+
+    private LoggerInterface $logger;
 
     private TestCenterServiceInterface $testCenterService;
 
@@ -46,6 +49,7 @@ class BookingService implements BookingServiceInterface
         EntityManagerInterface $entityManager,
         EventDispatcherInterface $eventDispatcher,
         MailerInterface $mailer,
+        LoggerInterface $logger,
         TestCenterServiceInterface $testCenterService,
         OpeningTimeServiceInterface $openingTimeService,
         BookingValidatorInterface $bookingValidator,
@@ -55,6 +59,7 @@ class BookingService implements BookingServiceInterface
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
         $this->mailer = $mailer;
+        $this->logger = $logger;
         $this->testCenterService = $testCenterService;
         $this->openingTimeService = $openingTimeService;
         $this->bookingValidator = $bookingValidator;
@@ -105,6 +110,7 @@ class BookingService implements BookingServiceInterface
         $testCenter = $this->testCenterService->getTestCenterByUuid($bookingDto->getTestCenterId());
 
         $booking = new Booking();
+        $booking->setCode(mb_substr($booking->getUuid()->toBase32(), 0, 10));
         $booking->setTestCenter($testCenter);
         $booking->setTime($bookingDto->getBookingTime());
 
@@ -158,12 +164,26 @@ class BookingService implements BookingServiceInterface
                     'name' => $booking->getTestCenter()->getName(),
                     'address' => $booking->getTestCenter()->getAddress()
                 ],
-                'bookingCode' => mb_substr($booking->getUuid()->toBase32(), 0, 10),
+                'bookingCode' => $booking->getCode(),
                 'bookingDate' => $booking->getTime()->format(AppConstants::FORMAT_EMAIL_CONFIRMATION),
                 'cancelUrl' => 'todo'
             ]);
 
-        $this->mailer->send($email);
+        try {
+            $this->mailer->send($email);
+            $this->logger->info('booking confirmation for booking {id} was sent', [
+                'id' => $booking->getUuid()->toRfc4122()
+            ]);
+        } catch (\Throwable $e) {
+            $this->logger->error('unable to send booking confirmation for booking {id}', [
+                'id' => $booking->getUuid()->toRfc4122(),
+                'exception' => $e
+            ]);
+        } finally {
+            $this->logger->debug('trying to send booking confirmation for booking {id}', [
+                'id' => $booking->getUuid()->toRfc4122()
+            ]);
+        }
     }
 
     private function validateBookingTimeIsValid(Booking $booking): void
