@@ -4,28 +4,36 @@ declare(strict_types=1);
 
 namespace App\EventListener;
 
+use App\Entity\Booking;
+use App\Event\BookingCancelledEvent;
 use App\Event\BookingCreatedEvent;
-use App\Service\BookingServiceInterface;
+use App\Service\BookingMailServiceInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class BookingEventListener implements EventSubscriberInterface
 {
-    private BookingServiceInterface $bookingService;
+    private BookingMailServiceInterface $bookingMailService;
 
-    public function __construct(BookingServiceInterface $bookingService)
+    public function __construct(BookingMailServiceInterface $bookingMailService)
     {
-        $this->bookingService = $bookingService;
+        $this->bookingMailService = $bookingMailService;
     }
 
     public static function getSubscribedEvents(): array
     {
         return [
-            BookingCreatedEvent::NAME => 'onBookingCreated'
+            BookingCreatedEvent::NAME => 'onBookingCreated',
+            BookingCancelledEvent::NAME => 'onBookingCancelled'
         ];
     }
 
     public function onBookingCreated(BookingCreatedEvent $event): void
     {
-        $this->bookingService->sendEmailConfirmation($event->getBooking());
+        $this->bookingMailService->sendEmailConfirmation($event->getBooking(), Booking::STATUS_CONFIRMED);
+    }
+
+    public function onBookingCancelled(BookingCancelledEvent $event): void
+    {
+        $this->bookingMailService->sendEmailConfirmation($event->getBooking(), Booking::STATUS_CANCELLED);
     }
 }

@@ -75,6 +75,14 @@ class BookingController extends AbstractApiController
         return $this->buildJsonPaginationResponse($result, [Booking::GROUP_READ]);
     }
 
+    #[Route('/api/booking/cancel/{id}', name: 'api.booking.cancel.id', methods: ['GET'])]
+    public function cancelBookingById(string $id): Response
+    {
+        $this->bookingService->cancelBookingByUuid($id);
+
+        return $this->json(['success' => true]);
+    }
+
     #[Route('/api/booking/checkout', name: 'api.booking.checkout', methods: ['POST'])]
     public function bookingCheckout(Request $request): Response
     {

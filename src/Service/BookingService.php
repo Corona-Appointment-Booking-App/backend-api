@@ -10,6 +10,7 @@ use App\DataTransferObject\BookingDto;
 use App\Entity\Booking;
 use App\Entity\BookingParticipant;
 use App\Entity\TestCenter;
+use App\Event\BookingCancelledEvent;
 use App\Event\BookingCreatedEvent;
 use App\Exception\BookingAlreadyExistsException;
 use App\Exception\BookingNotAllowedException;
@@ -20,9 +21,6 @@ use App\Service\Util\SanitizerInterface;
 use App\Service\Validator\BookingValidatorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Address;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class BookingService implements BookingServiceInterface
@@ -30,8 +28,6 @@ class BookingService implements BookingServiceInterface
     private EntityManagerInterface $entityManager;
 
     private EventDispatcherInterface $eventDispatcher;
-
-    private MailerInterface $mailer;
 
     private LoggerInterface $logger;
 
@@ -48,7 +44,6 @@ class BookingService implements BookingServiceInterface
     public function __construct(
         EntityManagerInterface $entityManager,
         EventDispatcherInterface $eventDispatcher,
-        MailerInterface $mailer,
         LoggerInterface $logger,
         TestCenterServiceInterface $testCenterService,
         OpeningTimeServiceInterface $openingTimeService,
@@ -58,7 +53,6 @@ class BookingService implements BookingServiceInterface
     ) {
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
-        $this->mailer = $mailer;
         $this->logger = $logger;
         $this->testCenterService = $testCenterService;
         $this->openingTimeService = $openingTimeService;
@@ -103,6 +97,18 @@ class BookingService implements BookingServiceInterface
         return $this->getBookingRepository()->getTotalItemsCount($onlyFromToday);
     }
 
+    public function cancelBookingByUuid(string $uuid): Booking
+    {
+        $booking = $this->getBookingByUuid($uuid);
+        $booking->setStatus(Booking::STATUS_CANCELLED);
+
+        $this->entityManager->flush();
+
+        $this->eventDispatcher->dispatch(new BookingCancelledEvent($booking), BookingCancelledEvent::NAME);
+
+        return $booking;
+    }
+
     public function createBooking(BookingDto $bookingDto): Booking
     {
         $this->bookingValidator->validateBooking($bookingDto);
@@ -111,6 +117,7 @@ class BookingService implements BookingServiceInterface
 
         $booking = new Booking();
         $booking->setCode(mb_substr($booking->getUuid()->toBase32(), 0, 10));
+        $booking->setStatus(Booking::STATUS_CONFIRMED);
         $booking->setTestCenter($testCenter);
         $booking->setTime($bookingDto->getBookingTime());
 
@@ -144,46 +151,6 @@ class BookingService implements BookingServiceInterface
         $this->eventDispatcher->dispatch(new BookingCreatedEvent($booking), BookingCreatedEvent::NAME);
 
         return $booking;
-    }
-
-    public function sendEmailConfirmation(Booking $booking): void
-    {
-        $toAddresses = [];
-        foreach ($booking->getParticipants() as $participant) {
-            /** @var BookingParticipant $participant */
-            $toAddresses[] = new Address($participant->getEmail());
-        }
-
-        $email = (new TemplatedEmail())
-            ->from($this->appContext->getContextMailSender())
-            ->to(...$toAddresses)
-            ->subject('Buchungsbestätigung')
-            ->htmlTemplate('emails/booking-confirmation.html.twig')
-            ->context([
-                'testCenter' => [
-                    'name' => $booking->getTestCenter()->getName(),
-                    'address' => $booking->getTestCenter()->getAddress()
-                ],
-                'bookingCode' => $booking->getCode(),
-                'bookingDate' => $booking->getTime()->format(AppConstants::FORMAT_EMAIL_CONFIRMATION),
-                'cancelUrl' => 'todo'
-            ]);
-
-        try {
-            $this->mailer->send($email);
-            $this->logger->info('booking confirmation for booking {id} was sent', [
-                'id' => $booking->getUuid()->toRfc4122()
-            ]);
-        } catch (\Throwable $e) {
-            $this->logger->error('unable to send booking confirmation for booking {id}', [
-                'id' => $booking->getUuid()->toRfc4122(),
-                'exception' => $e
-            ]);
-        } finally {
-            $this->logger->debug('trying to send booking confirmation for booking {id}', [
-                'id' => $booking->getUuid()->toRfc4122()
-            ]);
-        }
     }
 
     private function validateBookingTimeIsValid(Booking $booking): void

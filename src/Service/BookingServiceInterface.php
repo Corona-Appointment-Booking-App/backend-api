@@ -19,7 +19,7 @@ interface BookingServiceInterface
 
     public function getTotalBookingsCount(bool $onlyFromToday = false): int;
 
-    public function createBooking(BookingDto $bookingDto): Booking;
+    public function cancelBookingByUuid(string $uuid): Booking;
 
-    public function sendEmailConfirmation(Booking $booking): void;
+    public function createBooking(BookingDto $bookingDto): Booking;
 }
