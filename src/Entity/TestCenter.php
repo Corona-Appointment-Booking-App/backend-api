@@ -48,7 +48,7 @@ class TestCenter implements EntityInterface
 
     /**
      * @ORM\Column(type="string")
-     * @Groups({"testCenter.read", "testCenter.write", "city.read", "city.write", "cityLocation.read", "cityLocation.write"})
+     * @Groups({"testCenter.read", "testCenter.write", "city.read", "city.write", "cityLocation.read", "cityLocation.write", "booking.read", "booking.write"})
      */
     private string $address;
 

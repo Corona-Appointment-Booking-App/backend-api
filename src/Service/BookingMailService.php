@@ -87,7 +87,11 @@ class BookingMailService implements BookingMailServiceInterface
                 ],
                 'bookingCode' => $booking->getCode(),
                 'bookingDate' => $booking->getTime()->format(AppConstants::FORMAT_EMAIL_CONFIRMATION),
-                'cancelUrl' => 'todo'
+                'cancelUrl' => sprintf(
+                    '%s/#/booking/cancel/%s',
+                    $this->appContext->getContextFrontendUrl(),
+                    $booking->getUuid()->toRfc4122()
+                )
             ]);
     }
 }

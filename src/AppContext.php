@@ -16,14 +16,18 @@ class AppContext
 
     private string $contextMailSender;
 
+    private string $contextFrontendUrl;
+
     public function __construct(
         string $contextYear,
         string $contextReleaseVersion,
-        string $contextMailSender
+        string $contextMailSender,
+        string $contextFrontendUrl
     ) {
         $this->contextYear = $contextYear;
         $this->contextReleaseVersion = $contextReleaseVersion;
         $this->contextMailSender = $contextMailSender;
+        $this->contextFrontendUrl = $contextFrontendUrl;
     }
 
     public function getContextYear(): string
@@ -54,5 +58,15 @@ class AppContext
     public function setContextMailSender(string $contextMailSender): void
     {
         $this->contextMailSender = $contextMailSender;
+    }
+
+    public function getContextFrontendUrl(): string
+    {
+        return $this->contextFrontendUrl;
+    }
+
+    public function setContextFrontendUrl(string $contextFrontendUrl): void
+    {
+        $this->contextFrontendUrl = $contextFrontendUrl;
     }
 }
