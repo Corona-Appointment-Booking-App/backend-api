@@ -21,6 +21,9 @@ class Booking implements EntityInterface
     public const GROUP_READ = 'booking.read';
     public const GROUP_WRITE = 'booking.write';
 
+    public const STATUS_CONFIRMED = 'confirmed';
+    public const STATUS_CANCELLED = 'cancelled';
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -47,6 +50,18 @@ class Booking implements EntityInterface
      * @Groups({"booking.read", "booking.write"})
      */
     private \DateTimeImmutable $time;
+
+    /**
+     * @ORM\Column(type="string", length=10, unique=true)
+     * @Groups({"booking.read", "booking.write"})
+     */
+    private string $code;
+
+    /**
+     * @ORM\Column(type="string")
+     * @Groups({"booking.read", "booking.write"})
+     */
+    private string $status;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\BookingParticipant", mappedBy="booking", cascade={"persist"})
@@ -110,6 +125,29 @@ class Booking implements EntityInterface
     public function setTime(\DateTimeImmutable $time): void
     {
         $this->time = $time;
+    }
+
+    public function getCode(): string
+    {
+        return $this->code;
+    }
+
+    public function setCode(string $code): void
+    {
+        $this->code = $code;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): void
+    {
+        if (!in_array($status, [static::STATUS_CONFIRMED, static::STATUS_CANCELLED], true)) {
+            throw new \InvalidArgumentException(sprintf('status %s is not allowed', $status));
+        }
+        $this->status = $status;
     }
 
     public function getParticipants()

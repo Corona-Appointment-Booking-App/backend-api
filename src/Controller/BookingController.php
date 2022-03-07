@@ -58,8 +58,6 @@ class BookingController extends AbstractApiController
     #[Route('/api/booking/id/{id}', name: 'api.booking.get.id', methods: ['GET'])]
     public function getBookingById(string $id): Response
     {
-        $this->denyAccessUnlessGranted(User::ROLE_ADMIN);
-
         $booking = $this->bookingService->getBookingByUuid($id);
 
         return $this->buildJsonSuccessResponse($booking);
@@ -73,6 +71,16 @@ class BookingController extends AbstractApiController
         $result = $this->bookingService->getRecentBookingsWithPagination($page, $perPage);
 
         return $this->buildJsonPaginationResponse($result, [Booking::GROUP_READ]);
+    }
+
+    #[Route('/api/booking/cancel', name: 'api.booking.cancel', methods: ['POST'])]
+    public function cancelBookingById(Request $request): Response
+    {
+        $payload = $this->getPayloadFromRequest($request);
+        $bookingId = (string) $payload['bookingId'] ??= '';
+        $this->bookingService->cancelBookingByUuid($bookingId);
+
+        return $this->json(['success' => true]);
     }
 
     #[Route('/api/booking/checkout', name: 'api.booking.checkout', methods: ['POST'])]

@@ -14,6 +14,8 @@ services:
             $appSecret: '%env(resolve:APP_SECRET)%'
             $contextYear: '%env(resolve:CONTEXT_YEAR)%'
             $contextReleaseVersion: '%env(resolve:CONTEXT_RELEASE_VERSION)%'
+            $contextMailSender: '%env(resolve:CONTEXT_MAIL_SENDER)%'
+            $contextFrontendUrl: '%env(resolve:CONTEXT_FRONTEND_URL)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

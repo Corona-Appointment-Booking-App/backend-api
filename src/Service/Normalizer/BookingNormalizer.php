@@ -24,8 +24,10 @@ class BookingNormalizer implements ContextAwareNormalizerInterface
 
         try {
             $data['formattedCreatedDate'] = (new \DateTimeImmutable($data['createdAt']))->format(AppConstants::FORMAT_CREATED_AT);
+            $data['formattedTime'] = (new \DateTimeImmutable($data['time']))->format(AppConstants::FORMAT_CREATED_AT);
         } catch (\Throwable $e) {
             $data['formattedCreatedDate'] = null;
+            $data['formattedTime'] = null;
         }
 
         return $data;

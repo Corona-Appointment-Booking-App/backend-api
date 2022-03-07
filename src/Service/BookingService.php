@@ -10,6 +10,9 @@ use App\DataTransferObject\BookingDto;
 use App\Entity\Booking;
 use App\Entity\BookingParticipant;
 use App\Entity\TestCenter;
+use App\Event\BookingCancelledEvent;
+use App\Event\BookingCreatedEvent;
+use App\Exception\BookingAlreadyCancelledException;
 use App\Exception\BookingAlreadyExistsException;
 use App\Exception\BookingNotAllowedException;
 use App\Exception\BookingNotFoundException;
@@ -18,10 +21,16 @@ use App\Repository\Result\PaginatedItemsResult;
 use App\Service\Util\SanitizerInterface;
 use App\Service\Validator\BookingValidatorInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class BookingService implements BookingServiceInterface
 {
     private EntityManagerInterface $entityManager;
+
+    private EventDispatcherInterface $eventDispatcher;
+
+    private LoggerInterface $logger;
 
     private TestCenterServiceInterface $testCenterService;
 
@@ -35,6 +44,8 @@ class BookingService implements BookingServiceInterface
 
     public function __construct(
         EntityManagerInterface $entityManager,
+        EventDispatcherInterface $eventDispatcher,
+        LoggerInterface $logger,
         TestCenterServiceInterface $testCenterService,
         OpeningTimeServiceInterface $openingTimeService,
         BookingValidatorInterface $bookingValidator,
@@ -42,6 +53,8 @@ class BookingService implements BookingServiceInterface
         AppContext $appContext
     ) {
         $this->entityManager = $entityManager;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->logger = $logger;
         $this->testCenterService = $testCenterService;
         $this->openingTimeService = $openingTimeService;
         $this->bookingValidator = $bookingValidator;
@@ -85,6 +98,22 @@ class BookingService implements BookingServiceInterface
         return $this->getBookingRepository()->getTotalItemsCount($onlyFromToday);
     }
 
+    public function cancelBookingByUuid(string $uuid): Booking
+    {
+        $booking = $this->getBookingByUuid($uuid);
+        if ($booking->getStatus() === Booking::STATUS_CANCELLED) {
+            throw new BookingAlreadyCancelledException($uuid);
+        }
+
+        $booking->setStatus(Booking::STATUS_CANCELLED);
+
+        $this->entityManager->flush();
+
+        $this->eventDispatcher->dispatch(new BookingCancelledEvent($booking), BookingCancelledEvent::NAME);
+
+        return $booking;
+    }
+
     public function createBooking(BookingDto $bookingDto): Booking
     {
         $this->bookingValidator->validateBooking($bookingDto);
@@ -92,6 +121,8 @@ class BookingService implements BookingServiceInterface
         $testCenter = $this->testCenterService->getTestCenterByUuid($bookingDto->getTestCenterId());
 
         $booking = new Booking();
+        $booking->setCode(mb_substr($booking->getUuid()->toBase32(), 0, 10));
+        $booking->setStatus(Booking::STATUS_CONFIRMED);
         $booking->setTestCenter($testCenter);
         $booking->setTime($bookingDto->getBookingTime());
 
@@ -121,6 +152,8 @@ class BookingService implements BookingServiceInterface
 
         $this->entityManager->persist($booking);
         $this->entityManager->flush();
+
+        $this->eventDispatcher->dispatch(new BookingCreatedEvent($booking), BookingCreatedEvent::NAME);
 
         return $booking;
     }
