@@ -12,6 +12,7 @@ use App\Entity\BookingParticipant;
 use App\Entity\TestCenter;
 use App\Event\BookingCancelledEvent;
 use App\Event\BookingCreatedEvent;
+use App\Exception\BookingAlreadyCancelledException;
 use App\Exception\BookingAlreadyExistsException;
 use App\Exception\BookingNotAllowedException;
 use App\Exception\BookingNotFoundException;
@@ -100,6 +101,10 @@ class BookingService implements BookingServiceInterface
     public function cancelBookingByUuid(string $uuid): Booking
     {
         $booking = $this->getBookingByUuid($uuid);
+        if ($booking->getStatus() === Booking::STATUS_CANCELLED) {
+            throw new BookingAlreadyCancelledException($uuid);
+        }
+
         $booking->setStatus(Booking::STATUS_CANCELLED);
 
         $this->entityManager->flush();
