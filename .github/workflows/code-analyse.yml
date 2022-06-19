@@ -1,0 +1,15 @@
+name: Code Analyse
+on: [ push, pull_request ]
+
+jobs:
+  code-analyse:
+    name: "Code Analyse with PHPStan"
+    runs-on: ubuntu-latest
+    container: ugurkankya/php:8.0-fpm
+
+    steps:
+      - name: Clone API
+        uses: actions/checkout@v3
+
+      - name: Code Analyse
+        run: vendor/bin/phpstan analyse
