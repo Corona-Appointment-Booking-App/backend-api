@@ -17,7 +17,7 @@ use Doctrine\ORM\EntityManagerInterface;
 class CityLocationService implements CityLocationServiceInterface
 {
     private CityLocationRepository $cityLocationRepository;
-    
+
     private EntityManagerInterface $entityManager;
 
     private CityLocationValidatorInterface $cityLocationValidator;

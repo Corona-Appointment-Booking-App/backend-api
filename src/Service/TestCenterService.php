@@ -17,7 +17,7 @@ use Doctrine\ORM\EntityManagerInterface;
 class TestCenterService implements TestCenterServiceInterface
 {
     private TestCenterRepository $testCenterRepository;
-    
+
     private EntityManagerInterface $entityManager;
 
     private TestCenterValidatorInterface $testCenterValidator;

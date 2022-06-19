@@ -14,7 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 class OpeningTimeService implements OpeningTimeServiceInterface
 {
     private OpeningTimeRepository $openingTimeRepository;
-    
+
     private EntityManagerInterface $entityManager;
 
     private AppContext $appContext;

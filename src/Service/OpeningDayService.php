@@ -13,7 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 class OpeningDayService implements OpeningDayServiceInterface
 {
     private OpeningDayRepository $openingDayRepository;
-    
+
     private EntityManagerInterface $entityManager;
 
     private SanitizerInterface $htmlSanitizer;

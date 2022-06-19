@@ -26,7 +26,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class BookingService implements BookingServiceInterface
 {
     private BookingRepository $bookingRepository;
-    
+
     private EntityManagerInterface $entityManager;
 
     private EventDispatcherInterface $eventDispatcher;

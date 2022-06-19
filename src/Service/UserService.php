@@ -18,7 +18,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class UserService implements UserServiceInterface
 {
     private UserRepository $userRepository;
-    
+
     private EntityManagerInterface $entityManager;
 
     private UserValidatorInterface $userValidator;

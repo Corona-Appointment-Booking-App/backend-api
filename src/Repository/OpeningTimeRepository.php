@@ -19,7 +19,7 @@ class OpeningTimeRepository extends AbstractRepository
             ->getQuery()
             ->getResult();
 
-        if (!is_array($openingTimes)) {
+        if (!\is_array($openingTimes)) {
             return [];
         }
 
