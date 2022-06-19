@@ -16,6 +16,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class CityService implements CityServiceInterface
 {
+    private CityRepository $cityRepository;
+    
     private EntityManagerInterface $entityManager;
 
     private CityValidatorInterface $cityValidator;
@@ -25,11 +27,13 @@ class CityService implements CityServiceInterface
     private SlugifyInterface $slugify;
 
     public function __construct(
+        CityRepository $cityRepository,
         EntityManagerInterface $entityManager,
         CityValidatorInterface $cityValidator,
         SanitizerInterface $htmlSanitizer,
         SlugifyInterface $slugify
     ) {
+        $this->cityRepository = $cityRepository;
         $this->entityManager = $entityManager;
         $this->cityValidator = $cityValidator;
         $this->htmlSanitizer = $htmlSanitizer;
@@ -39,9 +43,9 @@ class CityService implements CityServiceInterface
     public function getCityBySeoSlug(string $seoSlug): City
     {
         /** @var City $city */
-        $city = $this->getCityRepository()->getItemBySeoSlug($seoSlug);
+        $city = $this->cityRepository->getItemBySeoSlug($seoSlug);
 
-        if (null === $city) {
+        if (!$city instanceof City) {
             throw new CityNotFoundException($seoSlug);
         }
 
@@ -51,9 +55,9 @@ class CityService implements CityServiceInterface
     public function getCityByUuid(string $uuid): City
     {
         /** @var City $city */
-        $city = $this->getCityRepository()->getItemByUuid($uuid);
+        $city = $this->cityRepository->getItemByUuid($uuid);
 
-        if (null === $city) {
+        if (!$city instanceof City) {
             throw new CityNotFoundException($uuid);
         }
 
@@ -62,14 +66,14 @@ class CityService implements CityServiceInterface
 
     public function getRecentCitiesWithPagination(int $page, int $citiesPerPage): PaginatedItemsResult
     {
-        $query = $this->getCityRepository()->getRecentItemsQuery();
+        $query = $this->cityRepository->getRecentItemsQuery();
 
-        return $this->getCityRepository()->getPaginatedItemsForQuery($query, $page, $citiesPerPage);
+        return $this->cityRepository->getPaginatedItemsForQuery($query, $page, $citiesPerPage);
     }
 
     public function getTotalCitiesCount(bool $onlyFromToday = false): int
     {
-        return $this->getCityRepository()->getTotalItemsCount($onlyFromToday);
+        return $this->cityRepository->getTotalItemsCount($onlyFromToday);
     }
 
     public function createCity(CityDto $cityDto): City
@@ -104,10 +108,5 @@ class CityService implements CityServiceInterface
         $this->entityManager->flush();
 
         return $city;
-    }
-
-    private function getCityRepository(): CityRepository
-    {
-        return $this->entityManager->getRepository(City::class);
     }
 }

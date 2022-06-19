@@ -34,7 +34,7 @@ class OpeningDayGeneratorList implements OpeningDayGeneratorListInterface
 
         $openingDayGeneratorListCollection = new OpeningDayGeneratorListCollection();
 
-        for ($i = static::RANGE_FROM; $i <= static::RANGE_TO; ++$i) {
+        for ($i = self::RANGE_FROM; $i <= self::RANGE_TO; ++$i) {
             $day = (new \DateTimeImmutable(sprintf('%s +%s day', $date, $i)));
             $dayName = mb_strtolower($day->format(AppConstants::FORMAT_DAY));
 

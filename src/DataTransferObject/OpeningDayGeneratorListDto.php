@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\DataTransferObject;
 
-class OpeningDayGeneratorListDto extends AbstractDto
+class OpeningDayGeneratorListDto
 {
+    use ArrayAssignableTrait;
+
     private string $id;
 
     private string $day;

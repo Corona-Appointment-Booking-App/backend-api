@@ -5,5 +5,8 @@ parameters:
   level: max
   checkMissingIterableValueType: false
   checkGenericClassInNonGenericObjectType: false
+  treatPhpDocTypesAsCertain: false
   paths:
     - src
+  excludePaths:
+    - src/Repository/AbstractRepository.php

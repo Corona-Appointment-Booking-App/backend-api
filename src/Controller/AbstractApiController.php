@@ -59,7 +59,7 @@ abstract class AbstractApiController extends AbstractController
     protected function getPayloadFromRequest(Request $request): array
     {
         try {
-            return $request->toArray() ?? [];
+            return $request->toArray() ?: [];
         } catch (\Throwable $e) {
             return [];
         }

@@ -21,7 +21,7 @@ class BookingHydrator implements BookingHydratorInterface
         $bookingDto->setBookingTime($bookingTime);
 
         foreach ((array) $payload['participants'] ??= [] as $participant) {
-            $birthDate = $this->createBirthDate((string) $participant['birthDate'] ??= static::FALLBACK_BIRTHDATE);
+            $birthDate = $this->createBirthDate((string) $participant['birthDate'] ??= self::FALLBACK_BIRTHDATE);
 
             $bookingParticipantDto = (new BookingParticipantDto())->fromArray([
                 'firstName' => (string) $participant['firstName'] ??= '',
@@ -52,9 +52,21 @@ class BookingHydrator implements BookingHydratorInterface
     private function createBirthDate(string $birthDate): \DateTimeImmutable
     {
         try {
-            return (new \DateTimeImmutable())->createFromFormat(AppConstants::FORMAT_BIRTHDATE, $birthDate);
+            $date = (new \DateTimeImmutable())->createFromFormat(AppConstants::FORMAT_BIRTHDATE, $birthDate);
+
+            if (!$date instanceof \DateTimeImmutable) {
+                throw new \RuntimeException(sprintf('birthdate [%s] is invalid.', $birthDate));
+            }
+
+            return $date;
         } catch (\Throwable $e) {
-            return (new \DateTimeImmutable())->createFromFormat(AppConstants::FORMAT_BIRTHDATE, static::FALLBACK_BIRTHDATE);
+            $date = (new \DateTimeImmutable())->createFromFormat(AppConstants::FORMAT_BIRTHDATE, self::FALLBACK_BIRTHDATE);
+
+            if (!$date instanceof \DateTimeImmutable) {
+                throw new \RuntimeException(sprintf('birthdate [%s] is invalid.', $birthDate));
+            }
+
+            return $date;
         }
     }
 }

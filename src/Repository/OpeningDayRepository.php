@@ -10,11 +10,17 @@ class OpeningDayRepository extends AbstractRepository
 {
     public function getOpeningDayByDay(string $day): ?OpeningDay
     {
-        return $this->createQueryBuilder('d')
+        $openingDay = $this->createQueryBuilder('d')
             ->andWhere('d.day = :day')
             ->setParameter('day', $day)
             ->getQuery()
             ->getOneOrNullResult();
+
+        if (!$openingDay instanceof OpeningDay) {
+            return null;
+        }
+
+        return $openingDay;
     }
 
     protected function getEntityClass(): string

@@ -17,6 +17,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserService implements UserServiceInterface
 {
+    private UserRepository $userRepository;
+    
     private EntityManagerInterface $entityManager;
 
     private UserValidatorInterface $userValidator;
@@ -26,11 +28,13 @@ class UserService implements UserServiceInterface
     private SanitizerInterface $htmlSanitizer;
 
     public function __construct(
+        UserRepository $userRepository,
         EntityManagerInterface $entityManager,
         UserValidatorInterface $userValidator,
         UserPasswordHasherInterface $userPasswordHasher,
         SanitizerInterface $htmlSanitizer
     ) {
+        $this->userRepository = $userRepository;
         $this->entityManager = $entityManager;
         $this->userValidator = $userValidator;
         $this->userPasswordHasher = $userPasswordHasher;
@@ -40,9 +44,9 @@ class UserService implements UserServiceInterface
     public function getUserByUuid(string $uuid): User
     {
         /** @var User $user */
-        $user = $this->getUserRepository()->getItemByUuid($uuid);
+        $user = $this->userRepository->getItemByUuid($uuid);
 
-        if (null === $user) {
+        if (!$user instanceof User) {
             throw new UserNotFoundException($uuid);
         }
 
@@ -51,9 +55,9 @@ class UserService implements UserServiceInterface
 
     public function getRecentUsersWithPagination(int $page, int $usersPerPage): PaginatedItemsResult
     {
-        $query = $this->getUserRepository()->getRecentItemsQuery();
+        $query = $this->userRepository->getRecentItemsQuery();
 
-        return $this->getUserRepository()->getPaginatedItemsForQuery($query, $page, $usersPerPage);
+        return $this->userRepository->getPaginatedItemsForQuery($query, $page, $usersPerPage);
     }
 
     public function createUser(UserDto $userDto): User
@@ -98,7 +102,7 @@ class UserService implements UserServiceInterface
 
     private function validateIsEmailExisting(string $email): void
     {
-        $isExisting = $this->getUserRepository()->getUserByEmail($email);
+        $isExisting = $this->userRepository->getUserByEmail($email);
 
         if ($isExisting) {
             throw new UserAlreadyExistsException($email);
@@ -107,15 +111,10 @@ class UserService implements UserServiceInterface
 
     private function validateIsEmailExistingNotForUuid(string $email, string $uuid): void
     {
-        $isExisting = $this->getUserRepository()->getUserByEmailAndNotUuid($email, $uuid);
+        $isExisting = $this->userRepository->getUserByEmailAndNotUuid($email, $uuid);
 
         if ($isExisting) {
             throw new UserAlreadyExistsException($email);
         }
-    }
-
-    private function getUserRepository(): UserRepository
-    {
-        return $this->entityManager->getRepository(User::class);
     }
 }

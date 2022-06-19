@@ -32,12 +32,13 @@ class TestCenterNormalizer implements ContextAwareNormalizerInterface
 
     public function normalize($object, string $format = null, array $context = [])
     {
+        /** @var array $data */
         /** @var TestCenter $object */
         $data = $this->normalizer->normalize($object, $format, $context);
         $data['generatedOpeningDaysText'] = null;
         $data['availableNextOpeningDays'] = [];
 
-        $openingDays = $data['openingDays'] ?? [];
+        $openingDays = $object->getOpeningDays();
 
         if ($openingDays) {
             $openingDaysCollection = (new OpeningDayCollection())->createOpeningDayCollectionFromArray($openingDays);

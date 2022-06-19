@@ -26,20 +26,32 @@ abstract class AbstractRepository extends ServiceEntityRepository
 
     public function getItemBySeoSlug(string $slug): ?EntityInterface
     {
-        return $this->createQueryBuilder('i')
+        $entity = $this->createQueryBuilder('i')
             ->andWhere('i.seoSlug = :slug')
             ->setParameter('slug', $slug)
             ->getQuery()
             ->getOneOrNullResult();
+
+        if (!$entity instanceof EntityInterface) {
+            return null;
+        }
+
+        return $entity;
     }
 
     public function getItemByUuid(string $uuid): ?EntityInterface
     {
-        return $this->createQueryBuilder('i')
+        $entity = $this->createQueryBuilder('i')
             ->andWhere('i.uuid = :uuid')
             ->setParameter('uuid', $uuid, 'uuid')
             ->getQuery()
             ->getOneOrNullResult();
+
+        if (!$entity instanceof EntityInterface) {
+            return null;
+        }
+
+        return $entity;
     }
 
     public function getRecentItemsQuery(): Query

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\DataTransferObject;
 
-abstract class AbstractDto
+trait ArrayAssignableTrait
 {
     public function fromArray(array $data): self
     {
@@ -13,7 +13,7 @@ abstract class AbstractDto
          *  'id' => 1
          * }.
          */
-        $dto = new static();
+        $dto = new self();
 
         foreach ($data as $property => $value) {
             $setterMethod = sprintf('set%s', ucfirst($property));

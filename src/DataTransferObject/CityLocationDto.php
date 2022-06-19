@@ -6,8 +6,10 @@ namespace App\DataTransferObject;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class CityLocationDto extends AbstractDto
+class CityLocationDto
 {
+    use ArrayAssignableTrait;
+
     private string $id;
 
     /**

@@ -16,6 +16,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class TestCenterService implements TestCenterServiceInterface
 {
+    private TestCenterRepository $testCenterRepository;
+    
     private EntityManagerInterface $entityManager;
 
     private TestCenterValidatorInterface $testCenterValidator;
@@ -27,12 +29,14 @@ class TestCenterService implements TestCenterServiceInterface
     private SlugifyInterface $slugify;
 
     public function __construct(
+        TestCenterRepository $testCenterRepository,
         EntityManagerInterface $entityManager,
         TestCenterValidatorInterface $testCenterValidator,
         CityLocationService $cityLocationService,
         SanitizerInterface $htmlSanitizer,
         SlugifyInterface $slugify
     ) {
+        $this->testCenterRepository = $testCenterRepository;
         $this->entityManager = $entityManager;
         $this->testCenterValidator = $testCenterValidator;
         $this->cityLocationService = $cityLocationService;
@@ -43,9 +47,9 @@ class TestCenterService implements TestCenterServiceInterface
     public function getTestCenterBySeoSlug(string $seoSlug): TestCenter
     {
         /** @var TestCenter $testCenter */
-        $testCenter = $this->getTestCenterRepository()->getItemBySeoSlug($seoSlug);
+        $testCenter = $this->testCenterRepository->getItemBySeoSlug($seoSlug);
 
-        if (null === $testCenter) {
+        if (!$testCenter instanceof TestCenter) {
             throw new TestCenterNotFoundException($seoSlug);
         }
 
@@ -55,9 +59,9 @@ class TestCenterService implements TestCenterServiceInterface
     public function getTestCenterByUuid(string $uuid): TestCenter
     {
         /** @var TestCenter $testCenter */
-        $testCenter = $this->getTestCenterRepository()->getItemByUuid($uuid);
+        $testCenter = $this->testCenterRepository->getItemByUuid($uuid);
 
-        if (null === $testCenter) {
+        if (!$testCenter instanceof TestCenter) {
             throw new TestCenterNotFoundException($uuid);
         }
 
@@ -66,14 +70,14 @@ class TestCenterService implements TestCenterServiceInterface
 
     public function getRecentTestCentersWithPagination(int $page, int $testCentersPerPage): PaginatedItemsResult
     {
-        $query = $this->getTestCenterRepository()->getRecentItemsQuery();
+        $query = $this->testCenterRepository->getRecentItemsQuery();
 
-        return $this->getTestCenterRepository()->getPaginatedItemsForQuery($query, $page, $testCentersPerPage);
+        return $this->testCenterRepository->getPaginatedItemsForQuery($query, $page, $testCentersPerPage);
     }
 
     public function getTotalTestCentersCount(bool $onlyFromToday = false): int
     {
-        return $this->getTestCenterRepository()->getTotalItemsCount($onlyFromToday);
+        return $this->testCenterRepository->getTotalItemsCount($onlyFromToday);
     }
 
     public function createTestCenter(TestCenterDto $testCenterDto): TestCenter
@@ -114,10 +118,5 @@ class TestCenterService implements TestCenterServiceInterface
         $this->entityManager->flush();
 
         return $testCenter;
-    }
-
-    private function getTestCenterRepository(): TestCenterRepository
-    {
-        return $this->entityManager->getRepository(TestCenter::class);
     }
 }

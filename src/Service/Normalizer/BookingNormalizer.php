@@ -20,11 +20,15 @@ class BookingNormalizer implements ContextAwareNormalizerInterface
 
     public function normalize($object, string $format = null, array $context = [])
     {
+        /** @var array $data */
+        /** @var Booking $object */
         $data = $this->normalizer->normalize($object, $format, $context);
+        $data['formattedCreatedDate'] = null;
+        $data['formattedTime'] = null;
 
         try {
-            $data['formattedCreatedDate'] = (new \DateTimeImmutable($data['createdAt']))->format(AppConstants::FORMAT_CREATED_AT);
-            $data['formattedTime'] = (new \DateTimeImmutable($data['time']))->format(AppConstants::FORMAT_CREATED_AT);
+            $data['formattedCreatedDate'] = $object->getCreatedAt()->format(AppConstants::FORMAT_CREATED_AT);
+            $data['formattedTime'] = $object->getTime()->format(AppConstants::FORMAT_CREATED_AT);
         } catch (\Throwable $e) {
             $data['formattedCreatedDate'] = null;
             $data['formattedTime'] = null;

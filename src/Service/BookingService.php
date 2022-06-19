@@ -21,16 +21,15 @@ use App\Repository\Result\PaginatedItemsResult;
 use App\Service\Util\SanitizerInterface;
 use App\Service\Validator\BookingValidatorInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class BookingService implements BookingServiceInterface
 {
+    private BookingRepository $bookingRepository;
+    
     private EntityManagerInterface $entityManager;
 
     private EventDispatcherInterface $eventDispatcher;
-
-    private LoggerInterface $logger;
 
     private TestCenterServiceInterface $testCenterService;
 
@@ -43,18 +42,18 @@ class BookingService implements BookingServiceInterface
     private AppContext $appContext;
 
     public function __construct(
+        BookingRepository $bookingRepository,
         EntityManagerInterface $entityManager,
         EventDispatcherInterface $eventDispatcher,
-        LoggerInterface $logger,
         TestCenterServiceInterface $testCenterService,
         OpeningTimeServiceInterface $openingTimeService,
         BookingValidatorInterface $bookingValidator,
         SanitizerInterface $htmlSanitizer,
         AppContext $appContext
     ) {
+        $this->bookingRepository = $bookingRepository;
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
-        $this->logger = $logger;
         $this->testCenterService = $testCenterService;
         $this->openingTimeService = $openingTimeService;
         $this->bookingValidator = $bookingValidator;
@@ -65,9 +64,9 @@ class BookingService implements BookingServiceInterface
     public function getBookingByUuid(string $uuid): Booking
     {
         /** @var Booking $booking */
-        $booking = $this->getBookingRepository()->getItemByUuid($uuid);
+        $booking = $this->bookingRepository->getItemByUuid($uuid);
 
-        if (null === $booking) {
+        if (!$booking instanceof Booking) {
             throw new BookingNotFoundException($uuid);
         }
 
@@ -77,9 +76,9 @@ class BookingService implements BookingServiceInterface
     public function getBookingByTestCenterAndTime(TestCenter $testCenter, \DateTimeImmutable $time): Booking
     {
         /** @var Booking $booking */
-        $booking = $this->getBookingRepository()->getBookingByTestCenterAndTime($testCenter, $time);
+        $booking = $this->bookingRepository->getBookingByTestCenterAndTime($testCenter, $time);
 
-        if (null === $booking) {
+        if (!$booking instanceof Booking) {
             throw new BookingNotFoundException($testCenter->getUuid()->toRfc4122());
         }
 
@@ -88,14 +87,14 @@ class BookingService implements BookingServiceInterface
 
     public function getRecentBookingsWithPagination(int $page, int $bookingsPerPage): PaginatedItemsResult
     {
-        $query = $this->getBookingRepository()->getRecentItemsQuery();
+        $query = $this->bookingRepository->getRecentItemsQuery();
 
-        return $this->getBookingRepository()->getPaginatedItemsForQuery($query, $page, $bookingsPerPage);
+        return $this->bookingRepository->getPaginatedItemsForQuery($query, $page, $bookingsPerPage);
     }
 
     public function getTotalBookingsCount(bool $onlyFromToday = false): int
     {
-        return $this->getBookingRepository()->getTotalItemsCount($onlyFromToday);
+        return $this->bookingRepository->getTotalItemsCount($onlyFromToday);
     }
 
     public function cancelBookingByUuid(string $uuid): Booking
@@ -184,7 +183,7 @@ class BookingService implements BookingServiceInterface
     {
         $testCenter = $booking->getTestCenter();
         $time = $booking->getTime();
-        $isBooked = $this->getBookingRepository()->getBookingByTestCenterAndTime($testCenter, $time);
+        $isBooked = $this->bookingRepository->getBookingByTestCenterAndTime($testCenter, $time);
 
         if ($isBooked) {
             throw new BookingAlreadyExistsException($testCenter->getUuid()->toRfc4122(), $time);
@@ -205,10 +204,5 @@ class BookingService implements BookingServiceInterface
         }
 
         return $allowedOpeningTimes;
-    }
-
-    private function getBookingRepository(): BookingRepository
-    {
-        return $this->entityManager->getRepository(Booking::class);
     }
 }
