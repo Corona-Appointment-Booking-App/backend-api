@@ -18,6 +18,7 @@ return (new PhpCsFixer\Config())
         'no_useless_return' => true,
         'php_unit_strict' => true,
         'phpdoc_order' => true,
+        'phpdoc_trim_consecutive_blank_line_separation' => false,
         'strict_comparison' => true,
         'strict_param' => true,
     ])

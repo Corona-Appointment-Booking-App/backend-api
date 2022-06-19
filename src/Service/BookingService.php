@@ -101,7 +101,7 @@ class BookingService implements BookingServiceInterface
     public function cancelBookingByUuid(string $uuid): Booking
     {
         $booking = $this->getBookingByUuid($uuid);
-        if ($booking->getStatus() === Booking::STATUS_CANCELLED) {
+        if (Booking::STATUS_CANCELLED === $booking->getStatus()) {
             throw new BookingAlreadyCancelledException($uuid);
         }
 

@@ -8,7 +8,7 @@ class AppContext
 {
     /**
      * used to identify the year for processes
-     * for example: booking, opening time generation
+     * for example: booking, opening time generation.
      */
     private string $contextYear;
 

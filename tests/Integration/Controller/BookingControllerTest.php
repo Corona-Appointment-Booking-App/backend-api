@@ -50,7 +50,7 @@ class BookingControllerTest extends WebTestCase
 
     private CityLocation $cityLocation;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -158,8 +158,8 @@ class BookingControllerTest extends WebTestCase
                     'city' => 'testCity',
                     'phoneNumber' => '0123456789',
                     'email' => 'test@email.com',
-                    'birthDate' => '01.01.1980'
-                ]
+                    'birthDate' => '01.01.1980',
+                ],
             ],
         ];
         $requestData['token'] = $this->getTokenFromRequestData($requestData);
@@ -196,7 +196,7 @@ class BookingControllerTest extends WebTestCase
                     'city' => 'testCity',
                     'phoneNumber' => '0123456789',
                     'email' => 'test@email.com',
-                    'birthDate' => '01.01.1980'
+                    'birthDate' => '01.01.1980',
                 ],
                 [
                     'firstName' => 'test',
@@ -207,7 +207,7 @@ class BookingControllerTest extends WebTestCase
                     'city' => 'testCity',
                     'phoneNumber' => '0123456789',
                     'email' => 'test@email.com',
-                    'birthDate' => '01.01.1980'
+                    'birthDate' => '01.01.1980',
                 ],
                 [
                     'firstName' => 'test',
@@ -218,7 +218,7 @@ class BookingControllerTest extends WebTestCase
                     'city' => 'testCity',
                     'phoneNumber' => '0123456789',
                     'email' => 'test@email.com',
-                    'birthDate' => '01.01.1980'
+                    'birthDate' => '01.01.1980',
                 ],
                 [
                     'firstName' => 'test',
@@ -229,7 +229,7 @@ class BookingControllerTest extends WebTestCase
                     'city' => 'testCity',
                     'phoneNumber' => '0123456789',
                     'email' => 'test@email.com',
-                    'birthDate' => '01.01.1980'
+                    'birthDate' => '01.01.1980',
                 ],
                 [
                     'firstName' => 'test',
@@ -240,7 +240,7 @@ class BookingControllerTest extends WebTestCase
                     'city' => 'testCity',
                     'phoneNumber' => '0123456789',
                     'email' => 'test@email.com',
-                    'birthDate' => '01.01.1980'
+                    'birthDate' => '01.01.1980',
                 ],
                 [
                     'firstName' => 'test',
@@ -251,8 +251,8 @@ class BookingControllerTest extends WebTestCase
                     'city' => 'testCity',
                     'phoneNumber' => '0123456789',
                     'email' => 'test@email.com',
-                    'birthDate' => '01.01.1980'
-                ]
+                    'birthDate' => '01.01.1980',
+                ],
             ],
         ];
         $requestData['token'] = $this->getTokenFromRequestData($requestData);
@@ -291,8 +291,8 @@ class BookingControllerTest extends WebTestCase
                     'city' => 'testCity',
                     'phoneNumber' => '0123456789',
                     'email' => 'test@email.com',
-                    'birthDate' => '01.01.1980'
-                ]
+                    'birthDate' => '01.01.1980',
+                ],
             ],
         ];
         $requestData['token'] = $this->getTokenFromRequestData($requestData);
@@ -331,8 +331,8 @@ class BookingControllerTest extends WebTestCase
                     'city' => 'testCity',
                     'phoneNumber' => '0123456789',
                     'email' => 'test@email.com',
-                    'birthDate' => '01.01.1980'
-                ]
+                    'birthDate' => '01.01.1980',
+                ],
             ],
         ];
         $requestData['token'] = $this->getTokenFromRequestData($requestData);
@@ -371,8 +371,8 @@ class BookingControllerTest extends WebTestCase
                     'city' => 'testCity',
                     'phoneNumber' => '0123456789',
                     'email' => 'test@email.com',
-                    'birthDate' => '01.01.1980'
-                ]
+                    'birthDate' => '01.01.1980',
+                ],
             ],
         ];
         $requestData['token'] = $this->getTokenFromRequestData($requestData);
@@ -411,8 +411,8 @@ class BookingControllerTest extends WebTestCase
                     'city' => 'testCity',
                     'phoneNumber' => '0123456789',
                     'email' => 'test@email.com',
-                    'birthDate' => '01.01.1980'
-                ]
+                    'birthDate' => '01.01.1980',
+                ],
             ],
         ];
         $requestData['token'] = '';
@@ -451,8 +451,8 @@ class BookingControllerTest extends WebTestCase
                     'city' => 'testCity',
                     'phoneNumber' => '0123456789',
                     'email' => 'test@email.com',
-                    'birthDate' => '01.01.1980'
-                ]
+                    'birthDate' => '01.01.1980',
+                ],
             ],
         ];
         $requestData['token'] = $this->getTokenFromRequestData($requestData);
@@ -491,8 +491,8 @@ class BookingControllerTest extends WebTestCase
                     'city' => 'testCity',
                     'phoneNumber' => '0123456789',
                     'email' => 'test@email.com',
-                    'birthDate' => '01.01.1980'
-                ]
+                    'birthDate' => '01.01.1980',
+                ],
             ],
         ];
         $requestData['token'] = $this->getTokenFromRequestData($requestData);
@@ -584,9 +584,9 @@ class BookingControllerTest extends WebTestCase
                         [
                             'from' => '10:00',
                             'to' => '12:00',
-                        ]
-                    ]
-                ]
+                        ],
+                    ],
+                ],
             ]
         );
 

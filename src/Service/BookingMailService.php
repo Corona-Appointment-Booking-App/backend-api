@@ -53,7 +53,7 @@ class BookingMailService implements BookingMailServiceInterface
         $loggerContext = [
             'id' => $booking->getUuid()->toRfc4122(),
             'addresses' => $email->getTo(),
-            'type' => $type
+            'type' => $type,
         ];
 
         try {
@@ -71,7 +71,7 @@ class BookingMailService implements BookingMailServiceInterface
     {
         $toAddresses = [];
         foreach ($booking->getParticipants() as $participant) {
-            /** @var BookingParticipant $participant */
+            /* @var BookingParticipant $participant */
             $toAddresses[] = new Address($participant->getEmail());
         }
 
@@ -83,7 +83,7 @@ class BookingMailService implements BookingMailServiceInterface
             ->context([
                 'testCenter' => [
                     'name' => $booking->getTestCenter()->getName(),
-                    'address' => $booking->getTestCenter()->getAddress()
+                    'address' => $booking->getTestCenter()->getAddress(),
                 ],
                 'bookingCode' => $booking->getCode(),
                 'bookingDate' => $booking->getTime()->format(AppConstants::FORMAT_EMAIL_CONFIRMATION),
@@ -91,7 +91,7 @@ class BookingMailService implements BookingMailServiceInterface
                     '%s/#/booking/cancel/%s',
                     $this->appContext->getContextFrontendUrl(),
                     $booking->getUuid()->toRfc4122()
-                )
+                ),
             ]);
     }
 }
