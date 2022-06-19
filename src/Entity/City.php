@@ -90,12 +90,12 @@ class City implements EntityInterface
         $this->uuid = $uuid;
     }
 
-    public function getLocations()
+    public function getLocations(): Collection
     {
         return $this->locations;
     }
 
-    public function setLocations($locations): void
+    public function setLocations(Collection $locations): void
     {
         $this->locations = $locations;
     }

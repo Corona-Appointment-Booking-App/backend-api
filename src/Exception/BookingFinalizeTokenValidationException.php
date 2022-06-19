@@ -14,7 +14,7 @@ class BookingFinalizeTokenValidationException extends \RuntimeException
         int $code = 0,
         ?\Throwable $previous = null
     ) {
-        $message = sprintf(static::MESSAGE, $providedToken, $expectedToken);
+        $message = sprintf(self::MESSAGE, $providedToken, $expectedToken);
 
         parent::__construct($message, $code, $previous);
     }

@@ -23,7 +23,7 @@ class BookingEventListener implements EventSubscriberInterface
     {
         return [
             BookingCreatedEvent::NAME => 'onBookingCreated',
-            BookingCancelledEvent::NAME => 'onBookingCancelled'
+            BookingCancelledEvent::NAME => 'onBookingCancelled',
         ];
     }
 

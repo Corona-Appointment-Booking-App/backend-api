@@ -29,12 +29,12 @@ class OpeningDayGeneratorTextTest extends TestCase
             OpeningDayDto::DAY_WEDNESDAY,
             OpeningDayDto::DAY_THURSDAY,
             OpeningDayDto::DAY_FRIDAY,
-            OpeningDayDto::DAY_SATURDAY
+            OpeningDayDto::DAY_SATURDAY,
         ];
 
         $openingDays = [];
         foreach ($availableDays as $availableDay) {
-            if ($availableDay === OpeningDayDto::DAY_FRIDAY) {
+            if (OpeningDayDto::DAY_FRIDAY === $availableDay) {
                 $openingDays[] = [
                     'day' => $availableDay,
                     'times' => [
@@ -46,20 +46,20 @@ class OpeningDayGeneratorTextTest extends TestCase
                             'from' => '15:00',
                             'to' => '18:00',
                         ],
-                    ]
+                    ],
                 ];
                 continue;
             }
 
-            if ($availableDay === OpeningDayDto::DAY_SATURDAY) {
+            if (OpeningDayDto::DAY_SATURDAY === $availableDay) {
                 $openingDays[] = [
                     'day' => $availableDay,
                     'times' => [
                         [
                             'from' => '10:00',
                             'to' => '12:00',
-                        ]
-                    ]
+                        ],
+                    ],
                 ];
                 continue;
             }
@@ -74,8 +74,8 @@ class OpeningDayGeneratorTextTest extends TestCase
                     [
                         'from' => '16:00',
                         'to' => '18:00',
-                    ]
-                ]
+                    ],
+                ],
             ];
         }
 
@@ -94,7 +94,7 @@ class OpeningDayGeneratorTextTest extends TestCase
             OpeningDayDto::DAY_THURSDAY,
             OpeningDayDto::DAY_FRIDAY,
             OpeningDayDto::DAY_SATURDAY,
-            OpeningDayDto::DAY_SUNDAY
+            OpeningDayDto::DAY_SUNDAY,
         ];
 
         $openingDays = [];
@@ -105,8 +105,8 @@ class OpeningDayGeneratorTextTest extends TestCase
                    [
                        'from' => '08:00',
                        'to' => '21:00',
-                   ]
-                ]
+                   ],
+                ],
             ];
         }
 
@@ -125,20 +125,20 @@ class OpeningDayGeneratorTextTest extends TestCase
             OpeningDayDto::DAY_THURSDAY,
             OpeningDayDto::DAY_FRIDAY,
             OpeningDayDto::DAY_SATURDAY,
-            OpeningDayDto::DAY_SUNDAY
+            OpeningDayDto::DAY_SUNDAY,
         ];
 
         $openingDays = [];
         foreach ($availableDays as $availableDay) {
-            if ($availableDay === OpeningDayDto::DAY_SUNDAY) {
+            if (OpeningDayDto::DAY_SUNDAY === $availableDay) {
                 $openingDays[] = [
                     'day' => $availableDay,
                     'times' => [
                         [
                             'from' => '10:00',
                             'to' => '16:00',
-                        ]
-                    ]
+                        ],
+                    ],
                 ];
                 continue;
             }
@@ -149,8 +149,8 @@ class OpeningDayGeneratorTextTest extends TestCase
                     [
                         'from' => '07:00',
                         'to' => '18:00',
-                    ]
-                ]
+                    ],
+                ],
             ];
         }
 
@@ -168,20 +168,20 @@ class OpeningDayGeneratorTextTest extends TestCase
             OpeningDayDto::DAY_WEDNESDAY,
             OpeningDayDto::DAY_THURSDAY,
             OpeningDayDto::DAY_FRIDAY,
-            OpeningDayDto::DAY_SATURDAY
+            OpeningDayDto::DAY_SATURDAY,
         ];
 
         $openingDays = [];
         foreach ($availableDays as $availableDay) {
-            if ($availableDay === OpeningDayDto::DAY_WEDNESDAY || $availableDay === OpeningDayDto::DAY_SATURDAY) {
+            if (OpeningDayDto::DAY_WEDNESDAY === $availableDay || OpeningDayDto::DAY_SATURDAY === $availableDay) {
                 $openingDays[] = [
                     'day' => $availableDay,
                     'times' => [
                         [
                             'from' => '09:00',
                             'to' => '12:15',
-                        ]
-                    ]
+                        ],
+                    ],
                 ];
                 continue;
             }
@@ -196,8 +196,8 @@ class OpeningDayGeneratorTextTest extends TestCase
                     [
                         'from' => '15:00',
                         'to' => '18:00',
-                    ]
-                ]
+                    ],
+                ],
             ];
         }
 
@@ -215,8 +215,8 @@ class OpeningDayGeneratorTextTest extends TestCase
                 [
                     'from' => '06:00',
                     'to' => '06:30',
-                ]
-            ]
+                ],
+            ],
         ];
         $openingDays[] = [
             'day' => OpeningDayDto::DAY_TUESDAY,
@@ -224,8 +224,8 @@ class OpeningDayGeneratorTextTest extends TestCase
                 [
                     'from' => '07:00',
                     'to' => '07:10',
-                ]
-            ]
+                ],
+            ],
         ];
 
         $openingDayCollection = (new OpeningDayCollection())->createOpeningDayCollectionFromArray($openingDays);

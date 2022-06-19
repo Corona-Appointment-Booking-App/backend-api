@@ -24,7 +24,7 @@ class BookingFinalizeTokenGeneratorTest extends TestCase
                 'street' => 'testStreet',
                 'houseNumber' => '5',
                 'email' => 'test@email.com',
-            ]
+            ],
         ];
         $generatedToken = $bookingFinalizeTokenGenerator->generateToken(
             $participants,

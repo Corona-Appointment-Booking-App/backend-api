@@ -12,6 +12,6 @@ class CityLocationNotFoundException extends EntityNotFoundException
 
     public function __construct(string $seoSlugOrUuid, int $code = 0, ?\Throwable $previous = null)
     {
-        parent::__construct(sprintf(static::MESSAGE, $seoSlugOrUuid), $code, $previous);
+        parent::__construct(sprintf(self::MESSAGE, $seoSlugOrUuid), $code, $previous);
     }
 }

@@ -109,7 +109,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, EntityI
     public function getRoles(): array
     {
         $roles = $this->roles;
-        $roles[] = static::ROLE_USER;
+        $roles[] = self::ROLE_USER;
 
         return array_unique($roles);
     }
@@ -159,13 +159,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, EntityI
         return $this->email;
     }
 
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
-
     }
 
     public function getSerializationGroups(): array
     {
-        return [static::GROUP_READ, static::GROUP_WRITE];
+        return [self::GROUP_READ, self::GROUP_WRITE];
     }
 }

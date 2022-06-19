@@ -162,6 +162,10 @@ class OpeningDayGeneratorText implements OpeningDayGeneratorTextInterface
             OpeningDayDto::DAY_SUNDAY => 'so',
         ];
 
-        return ucfirst($mappedDays[$day]) ?? null;
+        if (!isset($mappedDays[$day])) {
+            return null;
+        }
+
+        return ucfirst($mappedDays[$day]);
     }
 }

@@ -12,14 +12,18 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class OpeningDayService implements OpeningDayServiceInterface
 {
+    private OpeningDayRepository $openingDayRepository;
+
     private EntityManagerInterface $entityManager;
 
     private SanitizerInterface $htmlSanitizer;
 
     public function __construct(
+        OpeningDayRepository $openingDayRepository,
         EntityManagerInterface $entityManager,
         SanitizerInterface $htmlSanitizer
     ) {
+        $this->openingDayRepository = $openingDayRepository;
         $this->entityManager = $entityManager;
         $this->htmlSanitizer = $htmlSanitizer;
     }
@@ -27,9 +31,9 @@ class OpeningDayService implements OpeningDayServiceInterface
     public function getOpeningDayByUuid(string $uuid): OpeningDay
     {
         /** @var OpeningDay $openingDay */
-        $openingDay = $this->getOpeningDayRepository()->getItemByUuid($uuid);
+        $openingDay = $this->openingDayRepository->getItemByUuid($uuid);
 
-        if (null === $openingDay) {
+        if (!$openingDay instanceof OpeningDay) {
             throw new OpeningDayNotFoundException($uuid);
         }
 
@@ -39,9 +43,9 @@ class OpeningDayService implements OpeningDayServiceInterface
     public function getOpeningDayByDay(string $day): OpeningDay
     {
         /** @var OpeningDay $openingDay */
-        $openingDay = $this->getOpeningDayRepository()->getOpeningDayByDay($day);
+        $openingDay = $this->openingDayRepository->getOpeningDayByDay($day);
 
-        if (null === $openingDay) {
+        if (!$openingDay instanceof OpeningDay) {
             throw new OpeningDayNotFoundException($day);
         }
 
@@ -50,7 +54,7 @@ class OpeningDayService implements OpeningDayServiceInterface
 
     public function getOpeningDays(): array
     {
-        return $this->getOpeningDayRepository()->findAll();
+        return $this->openingDayRepository->findAll();
     }
 
     public function createOpeningDay(string $day): OpeningDay
@@ -69,10 +73,5 @@ class OpeningDayService implements OpeningDayServiceInterface
     public function deleteAllOpeningDays(): void
     {
         $this->entityManager->getConnection()->executeQuery('TRUNCATE `opening_day`');
-    }
-
-    private function getOpeningDayRepository(): OpeningDayRepository
-    {
-        return $this->entityManager->getRepository(OpeningDay::class);
     }
 }

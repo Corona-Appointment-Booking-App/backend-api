@@ -39,7 +39,7 @@ class OpeningDayGeneratorListTest extends TestCase
             'date' => (new \DateTimeImmutable('friday'))->format('d.m.Y'),
             'openingTimeFrom' => '20:10',
             'openingTimeTo' => '20:40',
-            'isBookedOut' => false
+            'isBookedOut' => false,
         ]);
 
         static::assertSame($expectedOpeningDay->getDay(), $generated->getOpeningDays()[0]->getDay());
@@ -52,7 +52,7 @@ class OpeningDayGeneratorListTest extends TestCase
             'date' => (new \DateTimeImmutable('saturday'))->format('d.m.Y'),
             'openingTimeFrom' => '13:10',
             'openingTimeTo' => '17:40',
-            'isBookedOut' => false
+            'isBookedOut' => false,
         ]);
 
         static::assertSame($expectedOpeningDay->getDay(), $generated->getOpeningDays()[1]->getDay());
@@ -65,7 +65,7 @@ class OpeningDayGeneratorListTest extends TestCase
             'date' => (new \DateTimeImmutable('sunday'))->format('d.m.Y'),
             'openingTimeFrom' => '12:00',
             'openingTimeTo' => '23:45',
-            'isBookedOut' => false
+            'isBookedOut' => false,
         ]);
 
         static::assertSame($expectedOpeningDay->getDay(), $generated->getOpeningDays()[2]->getDay());
@@ -78,7 +78,7 @@ class OpeningDayGeneratorListTest extends TestCase
             'date' => (new \DateTimeImmutable('monday'))->format('d.m.Y'),
             'openingTimeFrom' => '8:10',
             'openingTimeTo' => '11:20',
-            'isBookedOut' => false
+            'isBookedOut' => false,
         ]);
 
         static::assertSame($expectedOpeningDay->getDay(), $generated->getOpeningDays()[3]->getDay());
@@ -91,7 +91,7 @@ class OpeningDayGeneratorListTest extends TestCase
             'date' => (new \DateTimeImmutable('tuesday'))->format('d.m.Y'),
             'openingTimeFrom' => '18:20',
             'openingTimeTo' => '19:15',
-            'isBookedOut' => false
+            'isBookedOut' => false,
         ]);
 
         static::assertSame($expectedOpeningDay->getDay(), $generated->getOpeningDays()[4]->getDay());
@@ -104,7 +104,7 @@ class OpeningDayGeneratorListTest extends TestCase
             'date' => (new \DateTimeImmutable('friday'))->format('d.m.Y'),
             'openingTimeFrom' => '20:10',
             'openingTimeTo' => '20:40',
-            'isBookedOut' => false
+            'isBookedOut' => false,
         ]);
 
         static::assertSame($expectedOpeningDay->getDay(), $generated->getOpeningDays()[5]->getDay());
@@ -117,7 +117,7 @@ class OpeningDayGeneratorListTest extends TestCase
             'date' => (new \DateTimeImmutable('saturday'))->format('d.m.Y'),
             'openingTimeFrom' => '13:10',
             'openingTimeTo' => '17:40',
-            'isBookedOut' => false
+            'isBookedOut' => false,
         ]);
 
         static::assertSame($expectedOpeningDay->getDay(), $generated->getOpeningDays()[6]->getDay());
@@ -134,54 +134,54 @@ class OpeningDayGeneratorListTest extends TestCase
                 'times' => [
                     [
                         'from' => '8:10',
-                        'to' => '11:20'
-                    ]
-                ]
+                        'to' => '11:20',
+                    ],
+                ],
             ],
             [
                 'day' => 'tuesday',
                 'times' => [
                     [
                         'from' => '18:20',
-                        'to' => '19:15'
-                    ]
-                ]
+                        'to' => '19:15',
+                    ],
+                ],
             ],
             [
                 'day' => 'friday',
                 'times' => [
                     [
                         'from' => '20:10',
-                        'to' => '20:40'
-                    ]
-                ]
+                        'to' => '20:40',
+                    ],
+                ],
             ],
             [
                 'day' => 'saturday',
                 'times' => [
                     [
                         'from' => '13:10',
-                        'to' => '17:40'
-                    ]
-                ]
+                        'to' => '17:40',
+                    ],
+                ],
             ],
             [
                 'day' => 'sunday',
                 'times' => [
                     [
                         'from' => '12:00',
-                        'to' => '14:40'
+                        'to' => '14:40',
                     ],
                     [
                         'from' => '15:00',
-                        'to' => '21:26'
+                        'to' => '21:26',
                     ],
                     [
                         'from' => '22:00',
-                        'to' => '23:45'
-                    ]
-                ]
-            ]
+                        'to' => '23:45',
+                    ],
+                ],
+            ],
         ];
     }
 }

@@ -13,14 +13,18 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class OpeningTimeService implements OpeningTimeServiceInterface
 {
+    private OpeningTimeRepository $openingTimeRepository;
+
     private EntityManagerInterface $entityManager;
 
     private AppContext $appContext;
 
     public function __construct(
+        OpeningTimeRepository $openingTimeRepository,
         EntityManagerInterface $entityManager,
         AppContext $appContext
     ) {
+        $this->openingTimeRepository = $openingTimeRepository;
         $this->entityManager = $entityManager;
         $this->appContext = $appContext;
     }
@@ -28,9 +32,9 @@ class OpeningTimeService implements OpeningTimeServiceInterface
     public function getOpeningTimeByUuid(string $uuid): OpeningTime
     {
         /** @var OpeningTime $openingTime */
-        $openingTime = $this->getOpeningTimeRepository()->getItemByUuid($uuid);
+        $openingTime = $this->openingTimeRepository->getItemByUuid($uuid);
 
-        if (null === $openingTime) {
+        if (!$openingTime instanceof OpeningTime) {
             throw new OpeningTimeNotFoundException($uuid);
         }
 
@@ -40,9 +44,9 @@ class OpeningTimeService implements OpeningTimeServiceInterface
     public function getOpeningTimeByTime(\DateTimeImmutable $time): OpeningTime
     {
         /** @var OpeningTime $openingTime */
-        $openingTime = $this->getOpeningTimeRepository()->getOpeningTimeByTime($time);
+        $openingTime = $this->openingTimeRepository->getOpeningTimeByTime($time);
 
-        if (null === $openingTime) {
+        if (!$openingTime instanceof OpeningTime) {
             throw new OpeningTimeNotFoundException($time->format(AppConstants::FORMAT_TIME));
         }
 
@@ -51,7 +55,7 @@ class OpeningTimeService implements OpeningTimeServiceInterface
 
     public function getOpeningTimesBetweenFromAndTo(\DateTimeImmutable $from, \DateTimeImmutable $to): array
     {
-        return $this->getOpeningTimeRepository()->getOpeningTimesBetweenFromAndTo($from, $to);
+        return $this->openingTimeRepository->getOpeningTimesBetweenFromAndTo($from, $to);
     }
 
     public function getOpeningTimesForDay(string $day, array $openingDays): array
@@ -75,7 +79,7 @@ class OpeningTimeService implements OpeningTimeServiceInterface
 
     public function getOpeningTimes(): array
     {
-        return $this->getOpeningTimeRepository()->findAll();
+        return $this->openingTimeRepository->findAll();
     }
 
     public function createDateTimeFromTime(string $time): \DateTimeImmutable
@@ -104,11 +108,6 @@ class OpeningTimeService implements OpeningTimeServiceInterface
     public function deleteAllOpeningTimes(): void
     {
         $this->entityManager->getConnection()->executeQuery('TRUNCATE `opening_time`');
-    }
-
-    private function getOpeningTimeRepository(): OpeningTimeRepository
-    {
-        return $this->entityManager->getRepository(OpeningTime::class);
     }
 
     private function getFilteredOpeningTimesForDay(string $day, array $openingDays): array

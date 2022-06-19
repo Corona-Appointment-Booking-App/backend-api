@@ -108,12 +108,12 @@ class CityLocation implements EntityInterface
         $this->city = $city;
     }
 
-    public function getTestCenters()
+    public function getTestCenters(): Collection
     {
         return $this->testCenters;
     }
 
-    public function setTestCenters($testCenters): void
+    public function setTestCenters(Collection $testCenters): void
     {
         $this->testCenters = $testCenters;
     }

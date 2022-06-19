@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\DataTransferObject;
 
-class OpeningDayGeneratorListCollection extends AbstractDto
+class OpeningDayGeneratorListCollection
 {
+    use ArrayAssignableTrait;
+
     /**
      * @var OpeningDayGeneratorListDto[]
      */

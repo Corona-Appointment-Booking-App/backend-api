@@ -16,6 +16,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class CityLocationService implements CityLocationServiceInterface
 {
+    private CityLocationRepository $cityLocationRepository;
+
     private EntityManagerInterface $entityManager;
 
     private CityLocationValidatorInterface $cityLocationValidator;
@@ -27,12 +29,14 @@ class CityLocationService implements CityLocationServiceInterface
     private SlugifyInterface $slugify;
 
     public function __construct(
+        CityLocationRepository $cityLocationRepository,
         EntityManagerInterface $entityManager,
         CityLocationValidatorInterface $cityLocationValidator,
         CityServiceInterface $cityService,
         SanitizerInterface $htmlSanitizer,
         SlugifyInterface $slugify
     ) {
+        $this->cityLocationRepository = $cityLocationRepository;
         $this->entityManager = $entityManager;
         $this->cityLocationValidator = $cityLocationValidator;
         $this->cityService = $cityService;
@@ -43,9 +47,9 @@ class CityLocationService implements CityLocationServiceInterface
     public function getCityLocationBySeoSlug(string $seoSlug): CityLocation
     {
         /** @var CityLocation $cityLocation */
-        $cityLocation = $this->getCityLocationRepository()->getItemBySeoSlug($seoSlug);
+        $cityLocation = $this->cityLocationRepository->getItemBySeoSlug($seoSlug);
 
-        if (null === $cityLocation) {
+        if (!$cityLocation instanceof CityLocation) {
             throw new CityLocationNotFoundException($seoSlug);
         }
 
@@ -55,9 +59,9 @@ class CityLocationService implements CityLocationServiceInterface
     public function getCityLocationByUuid(string $uuid): CityLocation
     {
         /** @var CityLocation $cityLocation */
-        $cityLocation = $this->getCityLocationRepository()->getItemByUuid($uuid);
+        $cityLocation = $this->cityLocationRepository->getItemByUuid($uuid);
 
-        if (null === $cityLocation) {
+        if (!$cityLocation instanceof CityLocation) {
             throw new CityLocationNotFoundException($uuid);
         }
 
@@ -66,14 +70,14 @@ class CityLocationService implements CityLocationServiceInterface
 
     public function getRecentCityLocationsWithPagination(int $page, int $cityLocationsPerPage): PaginatedItemsResult
     {
-        $query = $this->getCityLocationRepository()->getRecentItemsQuery();
+        $query = $this->cityLocationRepository->getRecentItemsQuery();
 
-        return $this->getCityLocationRepository()->getPaginatedItemsForQuery($query, $page, $cityLocationsPerPage);
+        return $this->cityLocationRepository->getPaginatedItemsForQuery($query, $page, $cityLocationsPerPage);
     }
 
     public function getTotalCityLocationsCount(bool $onlyFromToday = false): int
     {
-        return $this->getCityLocationRepository()->getTotalItemsCount($onlyFromToday);
+        return $this->cityLocationRepository->getTotalItemsCount($onlyFromToday);
     }
 
     public function createCityLocation(CityLocationDto $cityLocationDto): CityLocation
@@ -110,10 +114,5 @@ class CityLocationService implements CityLocationServiceInterface
         $this->entityManager->flush();
 
         return $cityLocation;
-    }
-
-    private function getCityLocationRepository(): CityLocationRepository
-    {
-        return $this->entityManager->getRepository(CityLocation::class);
     }
 }

@@ -144,18 +144,21 @@ class Booking implements EntityInterface
 
     public function setStatus(string $status): void
     {
-        if (!in_array($status, [static::STATUS_CONFIRMED, static::STATUS_CANCELLED], true)) {
+        if (!\in_array($status, [static::STATUS_CONFIRMED, static::STATUS_CANCELLED], true)) {
             throw new \InvalidArgumentException(sprintf('status %s is not allowed', $status));
         }
         $this->status = $status;
     }
 
-    public function getParticipants()
+    /**
+     * @return Collection<BookingParticipant>
+     */
+    public function getParticipants(): Collection
     {
         return $this->participants;
     }
 
-    public function setParticipants($participants): void
+    public function setParticipants(Collection $participants): void
     {
         $this->participants = $participants;
     }

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\DataTransferObject;
 
-class OpeningDayDto extends AbstractDto
+class OpeningDayDto
 {
+    use ArrayAssignableTrait;
+
     public const DAY_MONDAY = 'monday';
     public const DAY_TUESDAY = 'tuesday';
     public const DAY_WEDNESDAY = 'wednesday';

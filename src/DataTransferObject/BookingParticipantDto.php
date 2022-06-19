@@ -6,8 +6,10 @@ namespace App\DataTransferObject;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class BookingParticipantDto extends AbstractDto
+class BookingParticipantDto
 {
+    use ArrayAssignableTrait;
+
     /**
      * @Assert\NotBlank
      * @Assert\Type("string")

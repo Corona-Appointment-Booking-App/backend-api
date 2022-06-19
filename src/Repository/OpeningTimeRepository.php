@@ -10,7 +10,7 @@ class OpeningTimeRepository extends AbstractRepository
 {
     public function getOpeningTimesBetweenFromAndTo(\DateTimeImmutable $from, \DateTimeImmutable $to): array
     {
-        return $this->createQueryBuilder('o')
+        $openingTimes = $this->createQueryBuilder('o')
             ->where('o.time >= :from')
             ->andWhere('o.time <= :to')
             ->setParameter('from', $from)
@@ -18,15 +18,27 @@ class OpeningTimeRepository extends AbstractRepository
             ->orderBy('o.time', 'ASC')
             ->getQuery()
             ->getResult();
+
+        if (!\is_array($openingTimes)) {
+            return [];
+        }
+
+        return $openingTimes;
     }
 
     public function getOpeningTimeByTime(\DateTimeImmutable $time): ?OpeningTime
     {
-        return $this->createQueryBuilder('o')
+        $openingTime = $this->createQueryBuilder('o')
             ->where('o.time = :time')
             ->setParameter('time', $time)
             ->getQuery()
             ->getOneOrNullResult();
+
+        if (!$openingTime instanceof OpeningTime) {
+            return null;
+        }
+
+        return $openingTime;
     }
 
     protected function getEntityClass(): string

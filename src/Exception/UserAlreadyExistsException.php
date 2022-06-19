@@ -16,7 +16,7 @@ class UserAlreadyExistsException extends \RuntimeException implements HttpExcept
         int $code = 0,
         ?\Throwable $previous = null
     ) {
-        parent::__construct(sprintf(static::MESSAGE, $email), $code, $previous);
+        parent::__construct(sprintf(self::MESSAGE, $email), $code, $previous);
     }
 
     public function getStatusCode(): int

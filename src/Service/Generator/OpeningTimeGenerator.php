@@ -21,7 +21,7 @@ class OpeningTimeGenerator implements OpeningTimeGeneratorInterface
                 $openingHour = '0'.$openingHour;
             }
 
-            //$openingHour = $openingHour. ':00';
+            // $openingHour = $openingHour. ':00';
             $openingTimes[] = $openingHour;
 
             foreach (range(5, 59, 5) as $openingTime) {

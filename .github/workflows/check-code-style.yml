@@ -1,0 +1,15 @@
+name: PHPUnit Test
+on: [ push, pull_request ]
+
+jobs:
+  check-code-style:
+    name: "Check Code Style with PHP CS Fixer"
+    runs-on: ubuntu-latest
+    container: ugurkankya/php:8.0-fpm
+
+    steps:
+      - name: Clone API
+        uses: actions/checkout@v3
+
+      - name: Check Code Style
+        run: php-cs-fixer fix -v --dry-run --diff --using-cache=no

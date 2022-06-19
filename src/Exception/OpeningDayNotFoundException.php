@@ -12,6 +12,6 @@ class OpeningDayNotFoundException extends EntityNotFoundException
 
     public function __construct(string $dayOrUuid, int $code = 0, ?\Throwable $previous = null)
     {
-        parent::__construct(sprintf(static::MESSAGE, $dayOrUuid), $code, $previous);
+        parent::__construct(sprintf(self::MESSAGE, $dayOrUuid), $code, $previous);
     }
 }

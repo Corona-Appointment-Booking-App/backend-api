@@ -39,13 +39,13 @@ class BookingMailService implements BookingMailServiceInterface
         $email = match ($type) {
             Booking::STATUS_CONFIRMED => $this->getTemplatedEmailWithData(
                 $booking,
-                static::SUBJECT_BOOKING_CONFIRMATION,
-                static::HTML_TEMPLATE_BOOKING_CONFIRMATION
+                self::SUBJECT_BOOKING_CONFIRMATION,
+                self::HTML_TEMPLATE_BOOKING_CONFIRMATION
             ),
             Booking::STATUS_CANCELLED => $this->getTemplatedEmailWithData(
                 $booking,
-                static::SUBJECT_BOOKING_CANCEL_CONFIRMATION,
-                static::HTML_TEMPLATE_BOOKING_CANCEL_CONFIRMATION
+                self::SUBJECT_BOOKING_CANCEL_CONFIRMATION,
+                self::HTML_TEMPLATE_BOOKING_CANCEL_CONFIRMATION
             ),
             default => throw new \InvalidArgumentException(sprintf('sending email confirmation for type %s is not supported.', $type)),
         };
@@ -53,7 +53,7 @@ class BookingMailService implements BookingMailServiceInterface
         $loggerContext = [
             'id' => $booking->getUuid()->toRfc4122(),
             'addresses' => $email->getTo(),
-            'type' => $type
+            'type' => $type,
         ];
 
         try {
@@ -71,7 +71,7 @@ class BookingMailService implements BookingMailServiceInterface
     {
         $toAddresses = [];
         foreach ($booking->getParticipants() as $participant) {
-            /** @var BookingParticipant $participant */
+            /* @var BookingParticipant $participant */
             $toAddresses[] = new Address($participant->getEmail());
         }
 
@@ -83,7 +83,7 @@ class BookingMailService implements BookingMailServiceInterface
             ->context([
                 'testCenter' => [
                     'name' => $booking->getTestCenter()->getName(),
-                    'address' => $booking->getTestCenter()->getAddress()
+                    'address' => $booking->getTestCenter()->getAddress(),
                 ],
                 'bookingCode' => $booking->getCode(),
                 'bookingDate' => $booking->getTime()->format(AppConstants::FORMAT_EMAIL_CONFIRMATION),
@@ -91,7 +91,7 @@ class BookingMailService implements BookingMailServiceInterface
                     '%s/#/booking/cancel/%s',
                     $this->appContext->getContextFrontendUrl(),
                     $booking->getUuid()->toRfc4122()
-                )
+                ),
             ]);
     }
 }
