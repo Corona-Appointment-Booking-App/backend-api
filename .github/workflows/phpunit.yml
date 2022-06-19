@@ -5,7 +5,7 @@ jobs:
   phpunit:
     name: "PHPUnit with PHP ${{ matrix.php-versions }}"
     runs-on: ubuntu-latest
-    container: ugurkankya/php${{ matrix.php-versions }}-fpm
+    container: ugurkankya/php:${{ matrix.php-versions }}-fpm
     strategy:
       matrix:
         php-versions: [ '8.0' ]
