@@ -54,6 +54,7 @@ COPY ./xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 COPY --from=composer:2.2.2 /usr/bin/composer /usr/local/bin/composer
 
 RUN wget https://cs.symfony.com/download/php-cs-fixer-v3.phar -O php-cs-fixer \
+    && chmod +x php-cs-fixer \
     && mv php-cs-fixer /usr/local/bin/php-cs-fixer
 
 RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
