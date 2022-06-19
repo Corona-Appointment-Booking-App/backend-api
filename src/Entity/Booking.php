@@ -150,12 +150,15 @@ class Booking implements EntityInterface
         $this->status = $status;
     }
 
-    public function getParticipants()
+    /**
+     * @return Collection<BookingParticipant>
+     */
+    public function getParticipants(): Collection
     {
         return $this->participants;
     }
 
-    public function setParticipants($participants): void
+    public function setParticipants(Collection $participants): void
     {
         $this->participants = $participants;
     }

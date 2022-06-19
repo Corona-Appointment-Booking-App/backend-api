@@ -17,7 +17,7 @@ class BookingAlreadyExistsException extends \RuntimeException implements HttpExc
         int $code = 0,
         ?\Throwable $previous = null
     ) {
-        $message = sprintf(static::MESSAGE, $testCenterId, $time->format(\DateTimeImmutable::ATOM));
+        $message = sprintf(self::MESSAGE, $testCenterId, $time->format(\DateTimeImmutable::ATOM));
 
         parent::__construct($message, $code, $previous);
     }

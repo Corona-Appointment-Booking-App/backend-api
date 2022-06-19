@@ -10,6 +10,6 @@ class BookingFinalizeTokenGeneratorException extends \RuntimeException
 
     public function __construct(string $errorMessage, int $code = 0, ?\Throwable $previous = null)
     {
-        parent::__construct(sprintf(static::MESSAGE, $errorMessage), $code, $previous);
+        parent::__construct(sprintf(self::MESSAGE, $errorMessage), $code, $previous);
     }
 }

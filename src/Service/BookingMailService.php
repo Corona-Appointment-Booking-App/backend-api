@@ -39,13 +39,13 @@ class BookingMailService implements BookingMailServiceInterface
         $email = match ($type) {
             Booking::STATUS_CONFIRMED => $this->getTemplatedEmailWithData(
                 $booking,
-                static::SUBJECT_BOOKING_CONFIRMATION,
-                static::HTML_TEMPLATE_BOOKING_CONFIRMATION
+                self::SUBJECT_BOOKING_CONFIRMATION,
+                self::HTML_TEMPLATE_BOOKING_CONFIRMATION
             ),
             Booking::STATUS_CANCELLED => $this->getTemplatedEmailWithData(
                 $booking,
-                static::SUBJECT_BOOKING_CANCEL_CONFIRMATION,
-                static::HTML_TEMPLATE_BOOKING_CANCEL_CONFIRMATION
+                self::SUBJECT_BOOKING_CANCEL_CONFIRMATION,
+                self::HTML_TEMPLATE_BOOKING_CANCEL_CONFIRMATION
             ),
             default => throw new \InvalidArgumentException(sprintf('sending email confirmation for type %s is not supported.', $type)),
         };

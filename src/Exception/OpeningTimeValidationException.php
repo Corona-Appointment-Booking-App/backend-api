@@ -15,7 +15,7 @@ class OpeningTimeValidationException extends BadRequestHttpException implements 
 
     public function __construct(ConstraintViolationListInterface $violationList, \Throwable $previous = null, int $code = 0, array $headers = [])
     {
-        parent::__construct(static::MESSAGE, $previous, $code, $headers);
+        parent::__construct(self::MESSAGE, $previous, $code, $headers);
 
         $this->violationList = $violationList;
     }

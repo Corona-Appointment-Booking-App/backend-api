@@ -23,17 +23,17 @@ class ExceptionListener
     {
         $exception = $event->getThrowable();
 
-        $error = static::ERROR_UNEXPECTED_ERROR;
+        $error = self::ERROR_UNEXPECTED_ERROR;
         if ($exception instanceof ValidationExceptionInterface) {
-            $error = static::ERROR_VALIDATION;
+            $error = self::ERROR_VALIDATION;
         }
 
         if ($exception instanceof BookingAlreadyExistsException) {
-            $error = static::ERROR_BOOKING_EXISTS;
+            $error = self::ERROR_BOOKING_EXISTS;
         }
 
         if ($exception instanceof BookingNotAllowedException) {
-            $error = static::ERROR_BOOKING_NOT_ALLOWED;
+            $error = self::ERROR_BOOKING_NOT_ALLOWED;
         }
 
         $response = new JsonResponse([

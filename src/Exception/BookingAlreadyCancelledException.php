@@ -17,7 +17,7 @@ class BookingAlreadyCancelledException extends BadRequestHttpException
         int $code = 0,
         array $headers = []
     ) {
-        $message = sprintf(static::MESSAGE, $bookingId);
+        $message = sprintf(self::MESSAGE, $bookingId);
 
         parent::__construct($message, $previous, $code, $headers);
     }

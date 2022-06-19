@@ -12,6 +12,6 @@ class UserNotFoundException extends EntityNotFoundException
 
     public function __construct(string $uuid, int $code = 0, ?\Throwable $previous = null)
     {
-        parent::__construct(sprintf(static::MESSAGE, $uuid), $code, $previous);
+        parent::__construct(sprintf(self::MESSAGE, $uuid), $code, $previous);
     }
 }

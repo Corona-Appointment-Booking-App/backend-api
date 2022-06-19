@@ -43,7 +43,7 @@ class BookingDto extends AbstractDto
     }
 
     /**
-     * @return iterable|BookingParticipantDto[]
+     * @return array<BookingParticipantDto>
      */
     public function getParticipants(): array
     {

@@ -12,6 +12,6 @@ class TestCenterNotFoundException extends EntityNotFoundException
 
     public function __construct(string $seoSlug, int $code = 0, ?\Throwable $previous = null)
     {
-        parent::__construct(sprintf(static::MESSAGE, $seoSlug), $code, $previous);
+        parent::__construct(sprintf(self::MESSAGE, $seoSlug), $code, $previous);
     }
 }
