@@ -11,5 +11,8 @@ jobs:
       - name: Clone API
         uses: actions/checkout@v3
 
+      - name: Install Composer Dependencies
+        run: composer install
+
       - name: Code Analyse
         run: vendor/bin/phpstan analyse
